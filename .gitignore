@@ -484,6 +484,9 @@ $RECYCLE.BIN/
 *.swp
 
 # SQLite Database files
-*.db
+*.db*
 *.sqlite
 *.sqlite3
+
+# Migratinos
+Migrations/
