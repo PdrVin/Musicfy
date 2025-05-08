@@ -1,5 +1,5 @@
-﻿// using Application.DTOs;
-// using Domain.Entities;
+﻿using Application.DTOs;
+using Domain.Entities;
 using AutoMapper;
 
 namespace Application.Mappings;
@@ -8,6 +8,9 @@ public class DomainToDTOMappingProfile
 {
     public DomainToDTOMappingProfile()
     {
-        // CreateMap<Entity, EntityDto>();
+        CreateMap<Album, AlbumDto>();
+        CreateMap<Artist, ArtistDto>();
+        CreateMap<Music, MusicDto>();
+        CreateMap<Playlist, PlaylistDto>();
     }
 }

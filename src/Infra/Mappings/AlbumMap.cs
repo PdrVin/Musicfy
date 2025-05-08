@@ -17,14 +17,15 @@ public class AlbumMap : IEntityTypeConfiguration<Album>
 
         builder.Property(al => al.Title)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(50);
 
         builder.Property(al => al.ReleaseDate)
             .IsRequired();
 
         builder.HasOne(al => al.Artist)
             .WithMany(ar => ar.Albums)
-            .HasForeignKey(al => al.ArtistId);
+            .HasForeignKey(al => al.ArtistId)
+            .IsRequired();
 
         builder.HasMany(al => al.Musics)
             .WithOne(mu => mu.Album)

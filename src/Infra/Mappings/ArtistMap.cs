@@ -14,7 +14,7 @@ public class ArtistMap : IEntityTypeConfiguration<Artist>
 
         builder.Property(ar => ar.Name)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(50);
 
         builder.HasMany(ar => ar.Albums)
             .WithOne(al => al.Artist)
