@@ -20,15 +20,21 @@ public static class DependencyInjectionConfig
         #endregion
 
         #region Services
-        // services.AddScoped<I[Entity]Service, [Entity]Service>();
+        services.AddScoped<IAlbumService, AlbumService>();
+        services.AddScoped<IArtistService, ArtistService>();
+        services.AddScoped<IMusicService, MusicService>();
+        services.AddScoped<IPlaylistService, PlaylistService>();
         #endregion
 
         #region Repositories
-        // services.AddScoped<I[Entity]Repositor, [Entity]Repository>();
+        services.AddScoped<IAlbumRepository, AlbumRepository>();
+        services.AddScoped<IArtistRepository, ArtistRepository>();
+        services.AddScoped<IMusicRepository, MusicRepository>();
+        services.AddScoped<IPlaylistRepository, PlaylistRepository>();
         #endregion
 
         #region AutoMapper Profiles
-        // services.AddAutoMapper(typeof(DomainToDTOMappingProfile));
+        services.AddAutoMapper(typeof(DomainToDTOMappingProfile).Assembly);
         #endregion
     }
 }
