@@ -6,5 +6,6 @@ namespace Application.Interfaces;
 
 public interface IAlbumService : IService<AlbumDto, Album>
 {
-    
+    Task AddAlbumAsync(AlbumDto albumDto);
+    Task UpdateAlbumAsync(AlbumDto albumDto);
 }

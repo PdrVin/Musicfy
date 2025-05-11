@@ -6,5 +6,6 @@ namespace Application.Interfaces;
 
 public interface IArtistService : IService<ArtistDto, Artist>
 {
-    
+    Task AddArtistAsync(ArtistDto artistDto);
+    Task UpdateArtistAsync(ArtistDto artistDto);
 }

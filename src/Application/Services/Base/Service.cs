@@ -5,7 +5,7 @@ using Domain.Interfaces.Base;
 namespace Application.Services.Base;
 
 public class Service<TDto, TEntity> : IService<TDto, TEntity>
-        where TEntity : class, IEntity
+    where TEntity : class, IEntity
 {
     private readonly IRepository<TEntity> _repository;
 
@@ -24,20 +24,9 @@ public class Service<TDto, TEntity> : IService<TDto, TEntity>
         return await _repository.GetByIdAsync(id);
     }
 
-    public async Task AddAsync(TEntity entity)
+    public async Task DeleteAsync(Guid id)
     {
-        await _repository.SaveAsync(entity);
-    }
-
-    public async Task UpdateAsync(TEntity entity)
-    {
-        _repository.Update(entity);
-        await Task.CompletedTask;
-    }
-
-    public async Task DeleteAsync(TEntity entity)
-    {
-        _repository.Delete(entity);
+        _repository.Delete(id);
         await Task.CompletedTask;
     }
 }

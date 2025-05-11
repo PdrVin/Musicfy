@@ -6,5 +6,6 @@ namespace Application.Interfaces;
 
 public interface IMusicService : IService<MusicDto, Music>
 {
-    
+    Task AddMusicAsync(MusicDto musicDto);
+    Task UpdateMusicAsync(MusicDto musicDto);
 }

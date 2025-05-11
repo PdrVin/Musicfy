@@ -8,9 +8,9 @@ public class DomainToDTOMappingProfile
 {
     public DomainToDTOMappingProfile()
     {
-        CreateMap<Album, AlbumDto>();
-        CreateMap<Artist, ArtistDto>();
-        CreateMap<Music, MusicDto>();
-        CreateMap<Playlist, PlaylistDto>();
+        CreateMap<Album, AlbumDto>().ReverseMap();
+        CreateMap<Artist, ArtistDto>().ReverseMap();
+        CreateMap<Music, MusicDto>().ReverseMap();
+        CreateMap<Playlist, PlaylistDto>().ReverseMap();
     }
 }
