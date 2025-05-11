@@ -1,0 +1,81 @@
+﻿@using Application.DTOs
+@using Domain.Entities
+
+@model IEnumerable<Artist>
+
+@{
+    ViewData["Title"] = "Artistas";
+}
+
+<div class="text-center gap-2 col-10 mx-auto">
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+        <a class="btn btn-primary" role="button" asp-controller="Artist" asp-action="Create">
+            <i class="bi bi-plus-lg"></i></a>
+    </div><br>
+
+    @if (TempData["MessageSuccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["MessageSuccess"]
+            <button type="button" class="btn btn-danger btn-md close-alert" arial-label="Close">
+                <i class="bi bi-x-lg"></i></button>
+        </div>
+    }
+
+    @if (TempData["MessageError"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["MessageError"]
+            <button type="button" class="btn btn-danger btn-md close-alert" arial-label="Close">
+                <i class="bi bi-x-lg"></i></button>
+        </div>
+    }
+
+    <h2 class="display-4">Artistas</h2>
+    <table class="table table-sm border border-success text-light" id="table-artist">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Álbuns</th>
+                <th scope="col">Músicas</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int rowNumber = 1;
+                foreach (Artist artist in Model)
+                {
+                    <tr>
+                        <th scope="row">@rowNumber</th>
+                        <td>@artist.Name</td>
+                        <td>@artist.Albums.Count</td>
+                        <td>@artist.Musics.Count</td>
+                        <td>
+                            <div class="btn-group-sm" role="group">
+                                <a role="button" class="btn btn-primary" aria-label="Editar"
+                                    asp-route-id="@artist.Id" asp-controller="Artist" asp-action="Edit">
+                                    <i class="bi bi-pencil"></i></a>
+                                <a role="button" class="btn btn-danger" aria-label="Deletar"
+                                    asp-route-id="@artist.Id" asp-controller="Artist" asp-action="DeleteConfirm">
+                                    <i class="bi bi-trash3"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    rowNumber++;
+                }
+            }
+            else
+            {
+                <tr class="odd">
+                    <td valign="top" colspan="5">
+                        Nenhum Artista encontrado.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
