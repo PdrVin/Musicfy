@@ -71,12 +71,15 @@ public class Repository<T>
         }
     }
 
-    public void Delete(T entity)
+    public void Delete(Guid id)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(id);
 
         try
         {
+            var entity = Entities.Find(id) ??
+                throw new KeyNotFoundException($"Entity with id {id} not found");
+
             Entities.Remove(entity);
         }
         catch (Exception ex)

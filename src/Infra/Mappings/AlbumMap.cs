@@ -24,8 +24,7 @@ public class AlbumMap : IEntityTypeConfiguration<Album>
 
         builder.HasOne(al => al.Artist)
             .WithMany(ar => ar.Albums)
-            .HasForeignKey(al => al.ArtistId)
-            .IsRequired();
+            .HasForeignKey(al => al.ArtistId);
 
         builder.HasMany(al => al.Musics)
             .WithOne(mu => mu.Album)

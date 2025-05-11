@@ -18,12 +18,10 @@ public class ArtistMap : IEntityTypeConfiguration<Artist>
 
         builder.HasMany(ar => ar.Albums)
             .WithOne(al => al.Artist)
-            .HasForeignKey(al => al.ArtistId)
-            .IsRequired();
+            .HasForeignKey(al => al.ArtistId);
 
         builder.HasMany(ar => ar.Musics)
             .WithOne(mu => mu.Artist)
-            .HasForeignKey(mu => mu.ArtistId)
-            .IsRequired();
+            .HasForeignKey(mu => mu.ArtistId);
     }
 }

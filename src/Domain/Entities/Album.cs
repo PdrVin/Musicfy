@@ -9,8 +9,8 @@ public class Album : EntityBase
     public string Title { get; set; }
     public DateTime ReleaseDate { get; set; }
 
-    public Guid ArtistId { get; set; }
-    public Artist Artist { get; set; }
+    public Guid? ArtistId { get; set; }
+    public Artist? Artist { get; set; }
 
-    public ICollection<Music> Musics { get; set; } = new List<Music>();
+    public ICollection<Music>? Musics { get; set; } = new List<Music>();
 }

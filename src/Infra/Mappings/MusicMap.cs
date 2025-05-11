@@ -24,13 +24,11 @@ public class MusicMap : IEntityTypeConfiguration<Music>
 
         builder.HasOne(mu => mu.Artist)
             .WithMany(ar => ar.Musics)
-            .HasForeignKey(mu => mu.ArtistId)
-            .IsRequired();
+            .HasForeignKey(mu => mu.ArtistId);
 
         builder.HasOne(mu => mu.Album)
             .WithMany(al => al.Musics)
-            .HasForeignKey(mu => mu.AlbumId)
-            .IsRequired();
+            .HasForeignKey(mu => mu.AlbumId);
 
         builder.HasMany(mu => mu.Playlists)
             .WithMany(pl => pl.Musics);
