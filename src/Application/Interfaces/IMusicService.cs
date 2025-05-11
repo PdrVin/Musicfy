@@ -8,4 +8,5 @@ public interface IMusicService : IService<MusicDto, Music>
 {
     Task AddMusicAsync(MusicDto musicDto);
     Task UpdateMusicAsync(MusicDto musicDto);
+    Task DeleteMusicAsync(Guid id);
 }

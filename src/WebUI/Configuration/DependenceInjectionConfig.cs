@@ -17,6 +17,7 @@ public static class DependencyInjectionConfig
         #region Base
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped(typeof(IService<,>), typeof(Service<,>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         #endregion
 
         #region Services

@@ -23,10 +23,4 @@ public class Service<TDto, TEntity> : IService<TDto, TEntity>
     {
         return await _repository.GetByIdAsync(id);
     }
-
-    public async Task DeleteAsync(Guid id)
-    {
-        _repository.Delete(id);
-        await Task.CompletedTask;
-    }
 }

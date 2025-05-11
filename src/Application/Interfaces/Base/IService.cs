@@ -7,5 +7,4 @@ public interface IService<TDto, TEntity>
 {
     Task<IEnumerable<TEntity>> GetAllAsync();
     Task<TEntity> GetByIdAsync(Guid id);
-    Task DeleteAsync(Guid id);
 }

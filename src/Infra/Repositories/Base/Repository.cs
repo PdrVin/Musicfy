@@ -4,6 +4,7 @@ using Infra.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Repositories.Base;
+
 public class Repository<T>
     : IRepository<T> where T : class, IEntity
 {
