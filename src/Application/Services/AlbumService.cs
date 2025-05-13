@@ -10,39 +10,59 @@ namespace Application.Services;
 public class AlbumService : Service<AlbumDto, Album>, IAlbumService
 {
     private readonly IAlbumRepository _albumRepository;
+    private readonly IArtistRepository _artistRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AlbumService(IAlbumRepository repository, IUnitOfWork unitOfWork) : base(repository)
+    public AlbumService(
+        IAlbumRepository repository,
+        IArtistRepository artistRepository,
+        IUnitOfWork unitOfWork
+        ) : base(repository)
     {
         _albumRepository = repository;
+        _artistRepository = artistRepository;
         _unitOfWork = unitOfWork;
+    }
+
+    public async Task<IEnumerable<Album>> GetAllWithArtistAsync()
+    {
+        return await _albumRepository.GetAllWithArtistAsync();
+    }
+
+    public async Task<Album?> GetByIdWithArtistAsync(Guid id)
+    {
+        return await _albumRepository.GetByIdWithArtistAsync(id);
     }
 
     public async Task AddAlbumAsync(AlbumDto albumDto)
     {
-        Album Album = new()
+        Artist? artist = await _artistRepository.GetByNameAsync(albumDto.ArtistName)
+            ?? throw new InvalidOperationException("Artist NotFound.");
+
+        Album album = new()
         {
             Title = albumDto.Title,
             ReleaseDate = albumDto.ReleaseDate,
-            ArtistId = albumDto.ArtistId,
-            // Artist = AlbumDto.ArtistName
+            ArtistId = artist.Id,
         };
 
-        await _albumRepository.SaveAsync(Album);
+        await _albumRepository.SaveAsync(album);
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task UpdateAlbumAsync(AlbumDto albumDto)
+    public async Task UpdateAlbumAsync(Album editAlbum)
     {
-        Album Album = new()
-        {
-            Title = albumDto.Title,
-            ReleaseDate = albumDto.ReleaseDate,
-            ArtistId = albumDto.ArtistId,
-            // Artist = AlbumDto.ArtistName
-        };
+        Album album = _albumRepository.GetByIdWithArtistAsync(editAlbum.Id).Result
+            ?? throw new Exception("NotFound");
 
-        _albumRepository.Update(Album);
+        Artist? artist = _artistRepository.GetByNameAsync(editAlbum.Artist.Name).Result;
+
+        album.Title = editAlbum.Title;
+        album.ReleaseDate = editAlbum.ReleaseDate;
+        album.ArtistId = artist.Id;
+        album.UpdatedAt = DateTime.Now;
+
+        _albumRepository.Update(album);
         await _unitOfWork.CommitAsync();
 
         await Task.CompletedTask;

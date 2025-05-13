@@ -22,12 +22,17 @@ public class AlbumMap : IEntityTypeConfiguration<Album>
         builder.Property(al => al.ReleaseDate)
             .IsRequired();
 
+        builder.Property(al => al.ArtistId)
+            .IsRequired();
+
         builder.HasOne(al => al.Artist)
             .WithMany(ar => ar.Albums)
-            .HasForeignKey(al => al.ArtistId);
+            .HasForeignKey(al => al.ArtistId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(al => al.Musics)
             .WithOne(mu => mu.Album)
-            .HasForeignKey(mu => mu.AlbumId);
+            .HasForeignKey(mu => mu.AlbumId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

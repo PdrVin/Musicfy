@@ -6,7 +6,9 @@ namespace Application.Interfaces;
 
 public interface IAlbumService : IService<AlbumDto, Album>
 {
+    Task<IEnumerable<Album>> GetAllWithArtistAsync();
+    Task<Album?> GetByIdWithArtistAsync(Guid id);
     Task AddAlbumAsync(AlbumDto albumDto);
-    Task UpdateAlbumAsync(AlbumDto albumDto);
+    Task UpdateAlbumAsync(Album album);
     Task DeleteAlbumAsync(Guid id);
 }

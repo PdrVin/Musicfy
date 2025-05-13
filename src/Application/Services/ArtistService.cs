@@ -18,6 +18,11 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         _unitOfWork = unitOfWork;
     }
 
+    public async Task<IEnumerable<Artist>> GetAllArtistsWithDataAsync()
+    {
+        return await _artistRepository.GetAllWithDataAsync();
+    }
+
     public async Task AddArtistAsync(ArtistDto artistDto)
     {
         Artist artist = new() { Name = artistDto.Name };
@@ -29,7 +34,9 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
     public async Task UpdateArtistAsync(Artist artist)
     {
         Artist entity = _artistRepository.GetByIdAsync(artist.Id).Result;
+
         entity.Name = artist.Name;
+        entity.UpdatedAt = DateTime.Now;
 
         _artistRepository.Update(entity);
         await _unitOfWork.CommitAsync();

@@ -40,6 +40,7 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
             Duration = musicDto.Duration,
             // Album = musicDto.Album
             // Artist = musicDto.ArtistName
+            UpdatedAt = DateTime.Now
         };
 
         _musicRepository.Update(music);

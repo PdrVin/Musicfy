@@ -13,7 +13,7 @@ public class ArtistController : Controller
         _artistService = artistService;
 
     public IActionResult Index() =>
-        View(_artistService.GetAllAsync().Result);
+        View(_artistService.GetAllArtistsWithDataAsync().Result);
 
     public IActionResult Create() =>
         View();
@@ -27,7 +27,7 @@ public class ArtistController : Controller
 
             _artistService.AddArtistAsync(artist);
 
-            TempData["MessageSuccess"] = "Contato cadastrado com sucesso.";
+            TempData["MessageSuccess"] = "Artista cadastrado com sucesso.";
             return RedirectToAction("Index");
         }
         catch (Exception error)
@@ -67,7 +67,7 @@ public class ArtistController : Controller
         try
         {
             if (_artistService.DeleteArtistAsync(id).IsCompleted)
-                TempData["MessageSuccess"] = "Contato deletado com sucesso.";
+                TempData["MessageSuccess"] = "Artista deletado com sucesso.";
             else
                 TempData["MessageError"] = "Erro no processo de Exclusão.";
 
