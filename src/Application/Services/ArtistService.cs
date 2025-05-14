@@ -12,42 +12,41 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
     private readonly IArtistRepository _artistRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ArtistService(IArtistRepository repository, IUnitOfWork unitOfWork) : base(repository)
+    public ArtistService(
+        IArtistRepository repository,
+        IUnitOfWork unitOfWork
+    )
+        : base(repository, unitOfWork)
     {
         _artistRepository = repository;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<Artist>> GetAllArtistsWithDataAsync()
-    {
-        return await _artistRepository.GetAllWithDataAsync();
-    }
+    public async Task<IEnumerable<Artist>> GetAllArtistsWithDataAsync() =>
+        await _artistRepository.GetAllWithDataAsync();
 
     public async Task AddArtistAsync(ArtistDto artistDto)
     {
-        Artist artist = new() { Name = artistDto.Name };
+        Artist artist = new()
+        {
+            Name = artistDto.Name,
+            CreatedAt = DateTime.Now,
+        };
 
         await _artistRepository.SaveAsync(artist);
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task UpdateArtistAsync(Artist artist)
+    public async Task UpdateArtistAsync(Artist editArtist)
     {
-        Artist entity = _artistRepository.GetByIdAsync(artist.Id).Result;
+        Artist artist = _artistRepository.GetByIdAsync(editArtist.Id).Result;
 
-        entity.Name = artist.Name;
-        entity.UpdatedAt = DateTime.Now;
+        artist.Name = editArtist.Name;
+        artist.UpdatedAt = DateTime.Now;
 
-        _artistRepository.Update(entity);
+        _artistRepository.Update(artist);
         await _unitOfWork.CommitAsync();
 
-        await Task.CompletedTask;
-    }
-
-    public async Task DeleteArtistAsync(Guid id)
-    {
-        _artistRepository.Delete(id);
-        await _unitOfWork.CommitAsync();
         await Task.CompletedTask;
     }
 }

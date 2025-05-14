@@ -10,5 +10,4 @@ public interface IAlbumService : IService<AlbumDto, Album>
     Task<Album?> GetByIdWithArtistAsync(Guid id);
     Task AddAlbumAsync(AlbumDto albumDto);
     Task UpdateAlbumAsync(Album album);
-    Task DeleteAlbumAsync(Guid id);
 }

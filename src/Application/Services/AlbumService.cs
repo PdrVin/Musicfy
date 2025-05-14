@@ -17,22 +17,19 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         IAlbumRepository repository,
         IArtistRepository artistRepository,
         IUnitOfWork unitOfWork
-        ) : base(repository)
+    )
+        : base(repository, unitOfWork)
     {
         _albumRepository = repository;
         _artistRepository = artistRepository;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<Album>> GetAllWithArtistAsync()
-    {
-        return await _albumRepository.GetAllWithArtistAsync();
-    }
+    public async Task<IEnumerable<Album>> GetAllWithArtistAsync() =>
+        await _albumRepository.GetAllWithArtistAsync();
 
-    public async Task<Album?> GetByIdWithArtistAsync(Guid id)
-    {
-        return await _albumRepository.GetByIdWithArtistAsync(id);
-    }
+    public async Task<Album?> GetByIdWithArtistAsync(Guid id) =>
+        await _albumRepository.GetByIdWithArtistAsync(id);
 
     public async Task AddAlbumAsync(AlbumDto albumDto)
     {
@@ -44,6 +41,7 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
             Title = albumDto.Title,
             ReleaseDate = albumDto.ReleaseDate,
             ArtistId = artist.Id,
+            CreatedAt = DateTime.Now,
         };
 
         await _albumRepository.SaveAsync(album);
@@ -55,7 +53,8 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         Album album = _albumRepository.GetByIdWithArtistAsync(editAlbum.Id).Result
             ?? throw new Exception("NotFound");
 
-        Artist? artist = _artistRepository.GetByNameAsync(editAlbum.Artist.Name).Result;
+        Artist? artist = _artistRepository.GetByNameAsync(editAlbum.Artist.Name).Result
+            ?? throw new Exception("NotFound");
 
         album.Title = editAlbum.Title;
         album.ReleaseDate = editAlbum.ReleaseDate;
@@ -65,13 +64,6 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         _albumRepository.Update(album);
         await _unitOfWork.CommitAsync();
 
-        await Task.CompletedTask;
-    }
-
-    public async Task DeleteAlbumAsync(Guid id)
-    {
-        _albumRepository.Delete(id);
-        await _unitOfWork.CommitAsync();
         await Task.CompletedTask;
     }
 }

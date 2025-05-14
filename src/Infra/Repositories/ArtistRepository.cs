@@ -27,5 +27,4 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
     {
         return await _context.Artists.FirstOrDefaultAsync(a => a.Name == name);
     }
-
 }

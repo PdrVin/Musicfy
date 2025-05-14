@@ -12,7 +12,11 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
     private readonly IPlaylistRepository _playlistRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PlaylistService(IPlaylistRepository repository, IUnitOfWork unitOfWork) : base(repository)
+    public PlaylistService(
+        IPlaylistRepository repository,
+        IUnitOfWork unitOfWork
+    )
+        : base(repository, unitOfWork)
     {
         _playlistRepository = repository;
         _unitOfWork = unitOfWork;
@@ -20,7 +24,11 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
 
     public async Task AddPlaylistAsync(PlaylistDto playlistDto)
     {
-        Playlist playlist = new() { Name = playlistDto.Name };
+        Playlist playlist = new()
+        {
+            Name = playlistDto.Name,
+            CreatedAt = DateTime.Now,
+        };
 
         await _playlistRepository.SaveAsync(playlist);
         await _unitOfWork.CommitAsync();
@@ -28,18 +36,15 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
 
     public async Task UpdatePlaylistAsync(PlaylistDto playlistDto)
     {
-        Playlist playlist = new() { Name = playlistDto.Name };
+        Playlist playlist = new()
+        {
+            Name = playlistDto.Name,
+            UpdatedAt = DateTime.Now,
+        };
 
         _playlistRepository.Update(playlist);
         await _unitOfWork.CommitAsync();
 
-        await Task.CompletedTask;
-    }
-
-    public async Task DeletePlaylistAsync(Guid id)
-    {
-        _playlistRepository.Delete(id);
-        await _unitOfWork.CommitAsync();
         await Task.CompletedTask;
     }
 }
