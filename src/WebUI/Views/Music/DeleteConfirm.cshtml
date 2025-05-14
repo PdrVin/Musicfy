@@ -1,0 +1,13 @@
+﻿@using Domain.Entities
+
+@model Music
+@{
+    ViewData["Title"] = "Excluir Música";
+}
+
+<div class="text-center">
+    <h3 class="display-5">Confirmar exclusão da Música (@Model.Title)?</h3>
+    <a class="btn btn-lg btn-secondary" role="button" asp-controller="Music" asp-action="Index">Cancelar</a>
+    <a class="btn btn-lg btn-danger" role="button" asp-controller="Music" asp-action="Delete"
+        asp-route-id="@Model.Id">Excluir</a>
+</div>

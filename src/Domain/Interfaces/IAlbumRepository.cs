@@ -5,6 +5,7 @@ namespace Domain.Interfaces;
 
 public interface IAlbumRepository : IRepository<Album>
 {
-    Task<IEnumerable<Album>> GetAllWithArtistAsync();
-    Task<Album?> GetByIdWithArtistAsync(Guid id);
+    Task<IEnumerable<Album>> GetAllWithDataAsync();
+    Task<Album?> GetByIdWithDataAsync(Guid id);
+    Task<Album?> GetByTitleAsync(string title);
 }

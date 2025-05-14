@@ -6,7 +6,8 @@ namespace Application.Interfaces;
 
 public interface IMusicService : IService<MusicDto, Music>
 {
+    Task<IEnumerable<Music>> GetAllWithDataAsync();
+    Task<Music?> GetByIdWithDataAsync(Guid id);
     Task AddMusicAsync(MusicDto musicDto);
-    Task UpdateMusicAsync(MusicDto musicDto);
-    Task DeleteMusicAsync(Guid id);
+    Task UpdateMusicAsync(Music editMusic);
 }

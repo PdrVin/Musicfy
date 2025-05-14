@@ -5,6 +5,7 @@ namespace Domain.Interfaces;
 
 public interface IMusicRepository : IRepository<Music>
 {
-    Task<IEnumerable<Music>> GetMusicsWithAlbumAndArtistAsync();
+    Task<IEnumerable<Music>> GetAllWithDataAsync();
+    Task<Music?> GetByIdWithDataAsync(Guid id);
 }
 

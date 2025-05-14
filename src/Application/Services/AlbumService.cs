@@ -25,11 +25,11 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<Album>> GetAllWithArtistAsync() =>
-        await _albumRepository.GetAllWithArtistAsync();
+    public async Task<IEnumerable<Album>> GetAllWithDataAsync() =>
+        await _albumRepository.GetAllWithDataAsync();
 
-    public async Task<Album?> GetByIdWithArtistAsync(Guid id) =>
-        await _albumRepository.GetByIdWithArtistAsync(id);
+    public async Task<Album?> GetByIdWithDataAsync(Guid id) =>
+        await _albumRepository.GetByIdWithDataAsync(id);
 
     public async Task AddAlbumAsync(AlbumDto albumDto)
     {
@@ -50,7 +50,7 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
 
     public async Task UpdateAlbumAsync(Album editAlbum)
     {
-        Album album = _albumRepository.GetByIdWithArtistAsync(editAlbum.Id).Result
+        Album album = _albumRepository.GetByIdWithDataAsync(editAlbum.Id).Result
             ?? throw new Exception("NotFound");
 
         Artist? artist = _artistRepository.GetByNameAsync(editAlbum.Artist.Name).Result

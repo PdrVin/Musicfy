@@ -13,20 +13,27 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
     public AlbumRepository(AppDbContext context) : base(context) =>
         _context = context;
 
-    public async Task<IEnumerable<Album>> GetAllWithArtistAsync()
+    public async Task<IEnumerable<Album>> GetAllWithDataAsync()
     {
         return await _context.Albums
             .Include(a => a.Artist)
+            .Include(a => a.Musics)
             .OrderBy(a => a.Artist.Name)
             .ThenBy(a => a.Title)
             .AsNoTracking()
             .ToListAsync();
     }
 
-    public async Task<Album?> GetByIdWithArtistAsync(Guid id)
+    public async Task<Album?> GetByIdWithDataAsync(Guid id)
     {
         return await _context.Albums
             .Include(a => a.Artist)
+            .Include(a => a.Musics)
             .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
+    public async Task<Album?> GetByTitleAsync(string title)
+    {
+        return await _context.Albums.FirstOrDefaultAsync(a => a.Title == title);
     }
 }

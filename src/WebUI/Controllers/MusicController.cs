@@ -5,28 +5,28 @@ using Domain.Entities;
 
 namespace WebUI.Controllers;
 
-public class AlbumController : Controller
+public class MusicController : Controller
 {
-    private readonly IAlbumService _albumService;
+    private readonly IMusicService _musicService;
 
-    public AlbumController(IAlbumService albumService) =>
-        _albumService = albumService;
+    public MusicController(IMusicService musicService) =>
+        _musicService = musicService;
 
     public IActionResult Index() =>
-        View(_albumService.GetAllWithDataAsync().Result);
+        View(_musicService.GetAllWithDataAsync().Result);
 
     public IActionResult Create() =>
         View();
 
     [HttpPost]
-    public IActionResult Create(AlbumDto album)
+    public IActionResult Create(MusicDto music)
     {
-        if (!ModelState.IsValid) return View(album);
+        if (!ModelState.IsValid) return View(music);
 
         try
         {
-            _albumService.AddAlbumAsync(album);
-            TempData["MessageSuccess"] = "Álbum cadastrado com sucesso.";
+            _musicService.AddMusicAsync(music);
+            TempData["MessageSuccess"] = "Música cadastrada com sucesso.";
         }
         catch (InvalidOperationException ex)
         {
@@ -40,17 +40,17 @@ public class AlbumController : Controller
     }
 
     public IActionResult Edit(Guid id) =>
-        View(_albumService.GetByIdWithDataAsync(id).Result);
+        View(_musicService.GetByIdWithDataAsync(id).Result);
 
     [HttpPost]
-    public IActionResult Edit(Album album)
+    public IActionResult Edit(Music music)
     {
-        if (!ModelState.IsValid) return View(album);
-
+        if (!ModelState.IsValid) return View(music);
+        
         try
         {
-            _albumService.UpdateAlbumAsync(album);
-            TempData["MessageSuccess"] = "Álbum atualizado com sucesso.";
+            _musicService.UpdateMusicAsync(music);
+            TempData["MessageSuccess"] = "Música atualizada com sucesso.";
         }
         catch (Exception error)
         {
@@ -60,14 +60,14 @@ public class AlbumController : Controller
     }
 
     public IActionResult DeleteConfirm(Guid id) =>
-        View(_albumService.GetByIdAsync(id).Result);
+        View(_musicService.GetByIdAsync(id).Result);
 
     public IActionResult Delete(Guid id)
     {
         try
         {
-            if (_albumService.DeleteAsync(id).IsCompleted)
-                TempData["MessageSuccess"] = "Contato deletado com sucesso.";
+            if (_musicService.DeleteAsync(id).IsCompleted)
+                TempData["MessageSuccess"] = "Música deletada com sucesso.";
             else
                 TempData["MessageError"] = "Erro no processo de Exclusão.";
         }
