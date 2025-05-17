@@ -19,20 +19,21 @@ public class ArtistController : Controller
         View();
 
     [HttpPost]
-    public IActionResult Create(ArtistDto artist)
+    public IActionResult Create(IEnumerable<ArtistDto> artists)
     {
-        if (!ModelState.IsValid) return View(artist);
+        if (!ModelState.IsValid) return View(artists);
 
         try
         {
-            _artistService.AddArtistAsync(artist);
-            TempData["MessageSuccess"] = "Artista cadastrado com sucesso.";
+            _artistService.AddManyArtistsAsync(artists);
+            TempData["MessageSuccess"] = "Artistas cadastrados com sucesso.";
+            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Cadastro: {error.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 
     public IActionResult Edit(Guid id) =>

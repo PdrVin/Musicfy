@@ -55,6 +55,32 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
         await _unitOfWork.CommitAsync();
     }
 
+    public async Task AddManyMusicsAsync(IEnumerable<MusicDto> musicDtos)
+    {
+        List<Music> musics = [];
+
+        foreach (var musicDto in musicDtos)
+        {
+            Album? album = await _albumRepository.GetByTitleAsync(musicDto.AlbumTitle)
+                ?? throw new InvalidOperationException("Album NotFound.");
+
+            Artist? artist = await _artistRepository.GetByNameAsync(musicDto.ArtistName)
+                ?? throw new InvalidOperationException("Artist NotFound.");
+
+            musics.Add(new Music
+            {
+                Title = musicDto.Title,
+                Duration = musicDto.Duration,
+                AlbumId = album.Id,
+                ArtistId = artist.Id,
+                CreatedAt = DateTime.Now,
+            });
+        }
+
+        await _musicRepository.SaveRangeAsync(musics);
+        await _unitOfWork.CommitAsync();
+    }
+
     public async Task UpdateMusicAsync(Music editMusic)
     {
         Music? music = await _musicRepository.GetByIdWithDataAsync(editMusic.Id)

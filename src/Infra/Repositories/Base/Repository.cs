@@ -58,6 +58,20 @@ public class Repository<T>
         }
     }
 
+    public async Task SaveRangeAsync(IEnumerable<T> entities)
+    {
+        ArgumentNullException.ThrowIfNull(entities);
+
+        try
+        {
+            await Entities.AddRangeAsync(entities);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error saving entities", ex);
+        }
+    }
+
     public void Update(T entity)
     {
         ArgumentNullException.ThrowIfNull(entity);

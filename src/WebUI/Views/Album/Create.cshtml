@@ -1,33 +1,57 @@
 @using Application.DTOs
 
-@model AlbumDto
+@model List<AlbumDto>
 @{
-    ViewData["Title"] = "Cadastrar Álbum";
+    ViewData["Title"] = "Cadastrar Álbums";
+    int initialRows = 1;
 }
 
 <div class="text-center">
-    <h2 class="display-4">Cadastrar Álbum</h2>
+    <h2 class="display-4 m-4">Cadastrar Álbums</h2>
 </div>
 
-<form asp-controller="Album" asp-action="Create" method="post">
-    <div class="mb-3 bg-dark">
-        <label for="name" class="form-label">Título do Álbum</label>
-        <input type="text" asp-for="Title" class="form-control bg-body text-white" placeholder="Digite o Título do Álbum">
-        @Html.ValidationMessageFor(x => x.Title)
+<form asp-controller="Album" asp-action="Create" method="post" id="albumForm">
+    <div class="input-group mb-2 bg-body">
+        <span class="form-label input-group-text bg-secondary"><b>#</b></span>
+        <label class="form-label col input-group-text bg-secondary"><b>Título do Álbum</b></label>
+        <label class="form-label col input-group-text bg-secondary"><b>Data de Lançamento</b></label>
+        <label class="form-label col input-group-text bg-secondary"><b>Artista do Álbum</b></label>
     </div>
 
-    <div class="mb-3 bg-dark">
-        <label for="releaseDate" class="form-label">Data de Lançamento</label>
-        <input type="date" asp-for="ReleaseDate" class="form-control bg-body text-white" placeholder="Digite o Data de Lançamento">
-        @Html.ValidationMessageFor(x => x.ReleaseDate)
+    <div id="albumInputs">
+        @for (int i = 0; i < initialRows; i++)
+        {
+            <div class="input-group mb-3 bg-body">
+                <span class="input-group-text bg-body text-white">@(i + 1)</span>
+
+                <input type="text" asp-for="@Model![i].Title" name="[@i].Title"
+                    class="form-control bg-body text-white" placeholder="Digite o Título do Álbum"
+                    value="@(Model != null && Model.Count > i ? Model[i].Title : "")" />
+                @Html.ValidationMessageFor(x => x[i].Title)
+
+                <input type="date" asp-for="@Model![i].ReleaseDate" name="[@i].ReleaseDate"
+                    class="form-control bg-body text-white" placeholder="Digite a Data de Lançamento"
+                    value="@(Model != null && Model.Count > i ? Model[i].ReleaseDate.ToString("yyyy-MM-dd") : "")" />
+                @Html.ValidationMessageFor(x => x[i].ReleaseDate)
+
+                <input type="text" asp-for="@Model![i].ArtistName" name="[@i].ArtistName"
+                    class="form-control bg-body text-white" placeholder="Digite o Artista do Álbum"
+                    value="@(Model != null && Model.Count > i ? Model[i].ArtistName : "")" />
+                @Html.ValidationMessageFor(x => x[i].ArtistName)
+            </div>
+        }
     </div>
 
-    <div class="mb-3 bg-dark">
-        <label for="name" class="form-label">Artista do Álbum</label>
-        <input type="text" asp-for="ArtistName" class="form-control bg-body text-white" placeholder="Digite o Artista do Álbum">
-        @Html.ValidationMessageFor(x => x.ArtistName)
+    <div class="mb-3">
+        <button type="button" class="btn btn-outline-secondary" onclick="addDynamicRow('albumInputs', [
+                { name: 'Title', placeholder: 'Digite o Título do Álbum' },
+                { name: 'ReleaseDate', type: 'date', placeholder: 'Digite a Data de Lançamento' },
+                { name: 'ArtistName', placeholder: 'Digite o Artista do Álbum' }
+            ])">Adicionar Mais</button>
+
+        <button type="button" class="btn btn-outline-danger" onclick="removeDynamicRow('albumInputs')">Remover</button>
     </div>
 
     <button type="submit" class="btn btn-primary">Salvar</button>
-    <a class="btn btn-secondary" role="button" asp-controller="Artist" asp-action="Index">Voltar</a>
+    <a class="btn btn-secondary" role="button" asp-controller="Album" asp-action="Index">Voltar</a>
 </form>

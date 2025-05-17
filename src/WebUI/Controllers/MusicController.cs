@@ -15,28 +15,42 @@ public class MusicController : Controller
     public IActionResult Index() =>
         View(_musicService.GetAllWithDataAsync().Result);
 
-    public IActionResult Create() =>
-        View();
+    public IActionResult Create(string? artistName, string? albumTitle)
+    {
+        if (artistName == null && albumTitle == null)
+            return View();
+
+        List<MusicDto> musics = [ new()
+        {
+            ArtistName = artistName!,
+            AlbumTitle = albumTitle!
+        }];
+
+        return View(musics);
+    }
+
 
     [HttpPost]
-    public IActionResult Create(MusicDto music)
+    public IActionResult Create(IEnumerable<MusicDto> musics)
     {
-        if (!ModelState.IsValid) return View(music);
+        if (!ModelState.IsValid) return View(musics);
 
         try
         {
-            _musicService.AddMusicAsync(music);
-            TempData["MessageSuccess"] = "Música cadastrada com sucesso.";
+            _musicService.AddManyMusicsAsync(musics);
+            TempData["MessageSuccess"] = "Músicas cadastradas com sucesso.";
+            return RedirectToAction("Index");
         }
         catch (InvalidOperationException ex)
         {
             TempData["MessageError"] = $"Erro: {ex.Message}";
+            return RedirectToAction("Index");
         }
         catch (Exception ex)
         {
             TempData["MessageError"] = $"Erro inesperado: {ex.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 
     public IActionResult Edit(Guid id) =>
@@ -46,7 +60,7 @@ public class MusicController : Controller
     public IActionResult Edit(Music music)
     {
         if (!ModelState.IsValid) return View(music);
-        
+
         try
         {
             _musicService.UpdateMusicAsync(music);

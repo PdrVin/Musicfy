@@ -48,6 +48,28 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         await _unitOfWork.CommitAsync();
     }
 
+    public async Task AddManyAlbumsAsync(IEnumerable<AlbumDto> albumDtos)
+    {
+        List<Album> albums = [];
+
+        foreach (var albumDto in albumDtos)
+        {
+            Artist? artist = await _artistRepository.GetByNameAsync(albumDto.ArtistName)
+                ?? throw new InvalidOperationException("Artist NotFound.");
+
+            albums.Add(new Album
+            {
+                Title = albumDto.Title,
+                ReleaseDate = albumDto.ReleaseDate,
+                ArtistId = artist.Id,
+                CreatedAt = DateTime.Now,
+            });
+        }
+
+        await _albumRepository.SaveRangeAsync(albums);
+        await _unitOfWork.CommitAsync();
+    }
+
     public async Task UpdateAlbumAsync(Album editAlbum)
     {
         Album album = _albumRepository.GetByIdWithDataAsync(editAlbum.Id).Result

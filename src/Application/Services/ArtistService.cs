@@ -37,6 +37,23 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         await _unitOfWork.CommitAsync();
     }
 
+    public async Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos)
+    {
+        List<Artist> artists = [];
+
+        foreach (var artistDto in artistDtos)
+        {
+            artists.Add(new Artist
+            {
+                Name = artistDto.Name,
+                CreatedAt = DateTime.Now,
+            });
+        }
+
+        await _artistRepository.SaveRangeAsync(artists);
+        await _unitOfWork.CommitAsync();
+    }
+
     public async Task UpdateArtistAsync(Artist editArtist)
     {
         Artist artist = _artistRepository.GetByIdAsync(editArtist.Id).Result;

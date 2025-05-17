@@ -1,43 +1,64 @@
 @using Application.DTOs
 
-@model MusicDto
+@model List<MusicDto>
 @{
     ViewData["Title"] = "Cadastrar Música";
+    int initialRows = 1;
 }
 
 <div class="text-center">
-    <h2 class="display-4">Cadastrar Música</h2>
+    <h2 class="display-4 m-4">Cadastrar Músicas</h2>
 </div>
 
-<form asp-controller="Music" asp-action="Create" method="post">
-    <div class="mb-3 bg-dark">
-        <label for="name" class="form-label">Título da Música</label>
-        <input type="text" asp-for="Title" class="form-control bg-body text-white"
-            placeholder="Digite o Título da Música">
-        @Html.ValidationMessageFor(x => x.Title)
+<form asp-controller="Music" asp-action="Create" method="post" id="musicForm">
+    <div class="input-group mb-2 bg-body">
+        <span class="form-label input-group-text bg-secondary"><b>#</b></span>
+        <label class="form-label col input-group-text bg-secondary"><b>Título da Música</b></label>
+        <label class="form-label col input-group-text bg-secondary"><b>Duração</b></label>
+        <label class="form-label col input-group-text bg-secondary"><b>Título do Álbum</b></label>
+        <label class="form-label col input-group-text bg-secondary"><b>Artista do Álbum</b></label>
     </div>
 
-    <div class="mb-3 bg-dark">
-        <label for="releaseDate" class="form-label">Duração</label>
-        <input type="time" asp-for="Duration" class="form-control bg-body text-white"
-            placeholder="Digite a Duração da Música">
-        @Html.ValidationMessageFor(x => x.Duration)
+    <div id="musicInputs">
+        @for (int i = 0; i < initialRows; i++)
+        {
+            <div class="input-group mb-3 bg-dark">
+                <span class="input-group-text bg-body text-white">@(i + 1)</span>
+
+                <input type="text" asp-for="@Model![i].Title" name="[@i].Title"
+                    class="form-control bg-body text-white"
+                    placeholder="Digite o Título da Música">
+                @Html.ValidationMessageFor(x => x[i].Title)
+
+                <input type="time" asp-for="@Model![i].Duration" name="[@i].Duration"
+                    class="form-control bg-body text-white"
+                    placeholder="Digite a Duração da Música">
+                @Html.ValidationMessageFor(x => x[i].Duration)
+
+                <input type="text" asp-for="@Model![i].AlbumTitle" name="[@i].AlbumTitle"
+                    class="form-control bg-body text-white"
+                    placeholder="Digite o Título do Álbum">
+                @Html.ValidationMessageFor(x => x[i].AlbumTitle)
+
+                <input type="text" asp-for="@Model![i].ArtistName" name="[@i].ArtistName"
+                    class="form-control bg-body text-white"
+                    placeholder="Digite o Artista do Álbum">
+                @Html.ValidationMessageFor(x => x[i].ArtistName)
+            </div>
+        }
     </div>
 
-    <div class="mb-3 bg-dark">
-        <label for="name" class="form-label">Título do Álbum</label>
-        <input type="text" asp-for="AlbumTitle" class="form-control bg-body text-white"
-            placeholder="Digite o Título do Álbum">
-        @Html.ValidationMessageFor(x => x.AlbumTitle)
-    </div>
+    <div class="mb-3">
+        <button type="button" class="btn btn-outline-secondary" onclick="addDynamicRow('musicInputs', [
+                { name: 'Title', placeholder: 'Digite o Título da Música' },
+                { name: 'Duration', type: 'time', placeholder: 'Digite a Duração da Música' },
+                { name: 'AlbumTitle', placeholder: 'Digite o Título do Álbum' },
+                { name: 'ArtistName', placeholder: 'Digite o Artista do Álbum' }
+            ])">Adicionar Mais</button>
 
-    <div class="mb-3 bg-dark">
-        <label for="name" class="form-label">Artista do Álbum</label>
-        <input type="text" asp-for="ArtistName" class="form-control bg-body text-white"
-            placeholder="Digite o Artista do Álbum">
-        @Html.ValidationMessageFor(x => x.ArtistName)
+        <button type="button" class="btn btn-outline-danger" onclick="removeDynamicRow('musicInputs')">Remover</button>
     </div>
 
     <button type="submit" class="btn btn-primary">Salvar</button>
-    <a class="btn btn-secondary" role="button" asp-controller="Artist" asp-action="Index">Voltar</a>
+    <a class="btn btn-secondary" role="button" asp-controller="Music" asp-action="Index">Voltar</a>
 </form>

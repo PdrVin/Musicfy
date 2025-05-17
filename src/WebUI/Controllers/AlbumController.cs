@@ -15,28 +15,38 @@ public class AlbumController : Controller
     public IActionResult Index() =>
         View(_albumService.GetAllWithDataAsync().Result);
 
-    public IActionResult Create() =>
-        View();
+    public IActionResult Create(string? artistName)
+    {
+        if (artistName == null) return View();
+
+        List<AlbumDto> albums = [ new() {
+            ArtistName = artistName!
+        }];
+
+        return View(albums);
+    }
 
     [HttpPost]
-    public IActionResult Create(AlbumDto album)
+    public IActionResult Create(IEnumerable<AlbumDto> albums)
     {
-        if (!ModelState.IsValid) return View(album);
+        if (!ModelState.IsValid) return View(albums);
 
         try
         {
-            _albumService.AddAlbumAsync(album);
-            TempData["MessageSuccess"] = "Álbum cadastrado com sucesso.";
+            _albumService.AddManyAlbumsAsync(albums);
+            TempData["MessageSuccess"] = "Álbums cadastrados com sucesso.";
+            return RedirectToAction("Index");
         }
         catch (InvalidOperationException ex)
         {
             TempData["MessageError"] = $"Erro: {ex.Message}";
+            return RedirectToAction("Index");
         }
         catch (Exception ex)
         {
             TempData["MessageError"] = $"Erro inesperado: {ex.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 
     public IActionResult Edit(Guid id) =>

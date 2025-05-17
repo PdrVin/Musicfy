@@ -1,19 +1,35 @@
 @using Application.DTOs
 
-@model ArtistDto
+@model List<ArtistDto>
 @{
-    ViewData["Title"] = "Cadastrar Artista";
+    ViewData["Title"] = "Cadastrar Artistas";
+    int initialRows = 1;
 }
 
 <div class="text-center">
-    <h2 class="display-4">Cadastrar Artista</h2>
-</div>
+    <h2 class="display-4 m-4">Cadastrar Artistas</h2>
+</div><br>
 
-<form asp-controller="Artist" asp-action="Create" method="post">
-    <div class="mb-3 bg-dark">
-        <label for="name" class="form-label">Nome do Artista</label>
-        <input type="text" asp-for="Name" class="form-control bg-body text-white" placeholder="Digite o Nome do Artista">
-        @Html.ValidationMessageFor(x => x.Name)
+<form asp-controller="Artist" asp-action="Create" method="post" id="artistForm">
+    <div id="artistInputs">
+        @for (int i = 0; i < initialRows; i++)
+        {
+            <div class="input-group mb-3 bg-dark text-white">
+                <span class="input-group-text bg-body text-white">@(i + 1)</span>
+                <input type="text" name="[@i].Name" class="form-control bg-body text-white"
+                    placeholder="Digite o Nome do Artista"
+                    value="@(Model != null && Model.Count > i ? Model[i].Name : "")" />
+            </div>
+        }
+    </div>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-outline-secondary"
+            onclick="addDynamicRow('artistInputs', [
+                { name: 'Name', placeholder: 'Digite o Nome do Artista' }
+            ])">Adicionar Mais</button>
+        <button type="button" class="btn btn-outline-danger"
+            onclick="removeDynamicRow('artistInputs')">Remover</button>
     </div>
 
     <button type="submit" class="btn btn-primary">Salvar</button>
