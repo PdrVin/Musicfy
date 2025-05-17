@@ -12,7 +12,8 @@
 <form asp-controller="Artist" asp-action="Edit" method="post">
     <div class="mb-3 bg-dark">
         <label for="name" class="form-label">Nome do Artista</label>
-        <input type="text" asp-for="Name" class="form-control bg-body text-white" placeholder="Digite o Nome do Artista">
+        <input type="text" asp-for="Name" class="form-control bg-body text-white"
+            placeholder="Digite o Nome do Artista">
         @Html.ValidationMessageFor(x => x.Name)
     </div>
 

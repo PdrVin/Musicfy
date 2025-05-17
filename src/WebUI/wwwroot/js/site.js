@@ -15,6 +15,9 @@ function getDataTable(id) {
         "ordering": true,
         "paging": true,
         "searching": true,
+        "columnDefs": [
+            { "className": "text-center", "targets": "_all" }
+        ],
         "oLanguage": {
             "sEmptyTable": "Nenhum registro encontrado na tabela",
             "sInfo": "Mostrar _START_ até _END_ de _TOTAL_ registros",

@@ -27,14 +27,15 @@
         </div>
     }
 
-    <h2 class="display-4">Artistas</h2>
+    <h2 class="display-4 m-4">Artistas</h2>
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-        <a class="btn btn-primary" role="button" asp-controller="Artist" asp-action="Create">
+        <a class="btn btn-primary" role="button" asp-controller="Artist" asp-action="Create"
+            title="Adicionar Artistas">
             <i class="bi bi-plus-lg"></i></a>
-    </div><br>
+    </div>
 
-    <table class="table table-sm border border-success text-light" id="table-artist">
+    <table class="table table-sm mt-3 border border-success text-light" id="table-artist">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -57,10 +58,13 @@
                         <td>@(artist.Musics?.Count ?? 0)</td>
                         <td>
                             <div class="btn-group-sm" role="group">
-                                <a role="button" class="btn btn-primary" aria-label="Editar"
+                                <a class="btn btn-success" role="button" title="Adicionar Álbum"
+                                    asp-route-ArtistName="@artist.Name" asp-controller="Album" asp-action="Create">
+                                    <i class="bi bi-disc"></i></a>
+                                <a role="button" class="btn btn-primary" title="Editar"
                                     asp-route-id="@artist.Id" asp-controller="Artist" asp-action="Edit">
                                     <i class="bi bi-pencil"></i></a>
-                                <a role="button" class="btn btn-danger" aria-label="Deletar"
+                                <a role="button" class="btn btn-danger" title="Deletar"
                                     asp-route-id="@artist.Id" asp-controller="Artist" asp-action="DeleteConfirm">
                                     <i class="bi bi-trash3"></i></a>
                             </div>

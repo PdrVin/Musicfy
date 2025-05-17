@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Application.Mappings;
 using Infra.Context;
 using WebUI.Configuration;
 
