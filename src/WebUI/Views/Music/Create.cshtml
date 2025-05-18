@@ -22,7 +22,7 @@
     <div id="musicInputs">
         @for (int i = 0; i < initialRows; i++)
         {
-            <div class="input-group mb-3 bg-dark">
+            <div class="input-group mb-3 bg-body">
                 <span class="input-group-text bg-body text-white">@(i + 1)</span>
 
                 <input type="text" asp-for="@Model![i].Title" name="[@i].Title"

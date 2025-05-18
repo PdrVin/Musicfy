@@ -56,12 +56,12 @@
                         <th scope="row">@rowNumber</th>
                         <td>@album.Title</td>
                         <td>@album.ReleaseDate.Year</td>
-                        <td>@(album.Artist?.Name ?? "Artista desconhecido")</td>
-                        <td>@(album.Musics?.Count ?? 0)</td>
+                        <td>@album.Artist!.Name</td>
+                        <td>@album.Musics!.Count</td>
                         <td>
                             <div class="btn-group-sm" role="group">
                                 <a class="btn btn-success" role="button" title="Adicionar Música"
-                                    asp-route-artistName="@album.Title" asp-controller="Music" asp-action="Create">
+                                    asp-route-ArtistName="@album.Artist!.Name" asp-route-AlbumTitle="@album.Title" asp-controller="Music" asp-action="Create">
                                     <i class="bi bi-music-note-beamed"></i></a>
                                 <a role="button" class="btn btn-primary" aria-label="Editar"
                                     asp-route-id="@album.Id" asp-controller="Album" asp-action="Edit">

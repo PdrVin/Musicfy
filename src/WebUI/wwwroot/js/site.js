@@ -53,7 +53,7 @@ function addDynamicRow(containerId, fieldConfigs) {
     const index = container.children.length;
 
     const div = document.createElement('div');
-    div.className = "input-group mb-3 bg-dark";
+    div.className = "input-group mb-3 bg-body";
 
     const span = document.createElement('span');
     span.className = "input-group-text bg-body text-white";
