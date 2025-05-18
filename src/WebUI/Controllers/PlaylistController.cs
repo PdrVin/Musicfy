@@ -48,12 +48,13 @@ public class PlaylistController : Controller
         {
             _playlistService.UpdatePlaylistAsync(playlist);
             TempData["MessageSuccess"] = "Playlist atualizado com sucesso.";
+            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Atualização: {error.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 
     public IActionResult DeleteConfirm(Guid id) =>
@@ -67,11 +68,13 @@ public class PlaylistController : Controller
                 TempData["MessageSuccess"] = "Playlist deletado com sucesso.";
             else
                 TempData["MessageError"] = "Erro no processo de Exclusão.";
+
+            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Exclusão: {error.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 }

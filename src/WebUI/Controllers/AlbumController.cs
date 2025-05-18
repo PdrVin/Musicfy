@@ -61,12 +61,13 @@ public class AlbumController : Controller
         {
             _albumService.UpdateAlbumAsync(album);
             TempData["MessageSuccess"] = "Álbum atualizado com sucesso.";
+            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Atualização: {error.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 
     public IActionResult DeleteConfirm(Guid id) =>
@@ -80,11 +81,13 @@ public class AlbumController : Controller
                 TempData["MessageSuccess"] = "Contato deletado com sucesso.";
             else
                 TempData["MessageError"] = "Erro no processo de Exclusão.";
+
+            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Exclusão: {error.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 }

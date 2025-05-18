@@ -57,25 +57,32 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
 
     public async Task AddManyMusicsAsync(IEnumerable<MusicDto> musicDtos)
     {
-        List<Music> musics = [];
+        var artistNames = musicDtos.Select(dto => dto.ArtistName).Distinct().ToList();
+        var albumTitles = musicDtos.Select(dto => dto.AlbumTitle).Distinct().ToList();
 
-        foreach (var musicDto in musicDtos)
+        var artists = await _artistRepository.GetByNamesAsync(artistNames);
+        var albums = await _albumRepository.GetByTitlesAsync(albumTitles);
+
+        var artistDict = artists.ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase);
+        var albumDict = albums.ToDictionary(a => a.Title, StringComparer.OrdinalIgnoreCase);
+
+        var musics = musicDtos.Select(dto =>
         {
-            Album? album = await _albumRepository.GetByTitleAsync(musicDto.AlbumTitle)
-                ?? throw new InvalidOperationException("Album NotFound.");
+            if (!artistDict.TryGetValue(dto.ArtistName, out var artist))
+                throw new InvalidOperationException($"Artist '{dto.ArtistName}' NotFound.");
 
-            Artist? artist = await _artistRepository.GetByNameAsync(musicDto.ArtistName)
-                ?? throw new InvalidOperationException("Artist NotFound.");
+            if (!albumDict.TryGetValue(dto.AlbumTitle, out var album))
+                throw new InvalidOperationException($"Album '{dto.AlbumTitle}' NotFound.");
 
-            musics.Add(new Music
+            return new Music
             {
-                Title = musicDto.Title,
-                Duration = musicDto.Duration,
-                AlbumId = album.Id,
+                Title = dto.Title,
+                Duration = dto.Duration,
                 ArtistId = artist.Id,
+                AlbumId = album.Id,
                 CreatedAt = DateTime.Now,
-            });
-        }
+            };
+        }).ToList();
 
         await _musicRepository.SaveRangeAsync(musics);
         await _unitOfWork.CommitAsync();

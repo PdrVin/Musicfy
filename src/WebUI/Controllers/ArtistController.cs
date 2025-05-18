@@ -48,12 +48,13 @@ public class ArtistController : Controller
         {
             _artistService.UpdateArtistAsync(artist);
             TempData["MessageSuccess"] = "Artista atualizado com sucesso.";
+            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Atualização: {error.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 
     public IActionResult DeleteConfirm(Guid id) =>
@@ -67,11 +68,13 @@ public class ArtistController : Controller
                 TempData["MessageSuccess"] = "Artista deletado com sucesso.";
             else
                 TempData["MessageError"] = "Erro no processo de Exclusão.";
+
+            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Exclusão: {error.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 }

@@ -39,7 +39,7 @@ public class MusicController : Controller
         {
             _musicService.AddManyMusicsAsync(musics);
             TempData["MessageSuccess"] = "Músicas cadastradas com sucesso.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Music");
         }
         catch (InvalidOperationException ex)
         {
@@ -65,12 +65,13 @@ public class MusicController : Controller
         {
             _musicService.UpdateMusicAsync(music);
             TempData["MessageSuccess"] = "Música atualizada com sucesso.";
+            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Atualização: {error.Message}";
+            return RedirectToAction("Index");
         }
-        return RedirectToAction("Index");
     }
 
     public IActionResult DeleteConfirm(Guid id) =>

@@ -7,6 +7,7 @@ public interface IArtistRepository : IRepository<Artist>
 {
     Task<IEnumerable<Artist>> GetAllWithDataAsync();
     Task<Artist?> GetByNameAsync(string name);
+    Task<List<Artist>> GetByNamesAsync(IEnumerable<string> names);
     Task<List<Artist>> GetTopArtistsByMusicAsync(int top);
 }
 

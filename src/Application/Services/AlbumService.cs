@@ -50,21 +50,24 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
 
     public async Task AddManyAlbumsAsync(IEnumerable<AlbumDto> albumDtos)
     {
-        List<Album> albums = [];
+        var artistNames = albumDtos.Select(dto => dto.ArtistName).Distinct().ToList();
+        var artists = await _artistRepository.GetByNamesAsync(artistNames);
 
-        foreach (var albumDto in albumDtos)
+        var artistDict = artists.ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase);
+
+        var albums = albumDtos.Select(dto =>
         {
-            Artist? artist = await _artistRepository.GetByNameAsync(albumDto.ArtistName)
-                ?? throw new InvalidOperationException("Artist NotFound.");
+            if (!artistDict.TryGetValue(dto.ArtistName, out var artist))
+                throw new InvalidOperationException($"Artist '{dto.ArtistName}' NotFound.");
 
-            albums.Add(new Album
+            return new Album
             {
-                Title = albumDto.Title,
-                ReleaseDate = albumDto.ReleaseDate,
+                Title = dto.Title,
+                ReleaseDate = dto.ReleaseDate,
                 ArtistId = artist.Id,
-                CreatedAt = DateTime.Now,
-            });
-        }
+                CreatedAt = DateTime.Now
+            };
+        }).ToList();
 
         await _albumRepository.SaveRangeAsync(albums);
         await _unitOfWork.CommitAsync();

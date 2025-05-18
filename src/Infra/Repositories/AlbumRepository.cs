@@ -36,4 +36,12 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
     {
         return await _context.Albums.FirstOrDefaultAsync(a => a.Title == title);
     }
+
+    public async Task<List<Album>> GetByTitlesAsync(IEnumerable<string> titles)
+    {
+        return await _context.Albums
+            .Where(a => titles.Contains(a.Title))
+            .Distinct()
+            .ToListAsync();
+    }
 }

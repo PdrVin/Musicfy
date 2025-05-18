@@ -28,11 +28,20 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
         return await _context.Artists.FirstOrDefaultAsync(a => a.Name == name);
     }
 
+    public async Task<List<Artist>> GetByNamesAsync(IEnumerable<string> names)
+    {
+        return await _context.Artists
+            .Where(a => names.Contains(a.Name))
+            .Distinct()
+            .ToListAsync();
+    }
+
     public async Task<List<Artist>> GetTopArtistsByMusicAsync(int top)
     {
         return await _context.Artists
             .Include(a => a.Musics)
             .OrderByDescending(a => a.Musics.Count)
+            .ThenByDescending(a => a.Albums.Count)
             .Take(top)
             .ToListAsync();
     }

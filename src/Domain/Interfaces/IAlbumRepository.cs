@@ -8,4 +8,5 @@ public interface IAlbumRepository : IRepository<Album>
     Task<IEnumerable<Album>> GetAllWithDataAsync();
     Task<Album?> GetByIdWithDataAsync(Guid id);
     Task<Album?> GetByTitleAsync(string title);
+    Task<List<Album>> GetByTitlesAsync(IEnumerable<string> titles);
 }
