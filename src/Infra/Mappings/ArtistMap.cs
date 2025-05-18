@@ -16,6 +16,9 @@ public class ArtistMap : IEntityTypeConfiguration<Artist>
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.HasIndex(ar => ar.Name)
+            .IsUnique();
+
         builder.HasMany(ar => ar.Albums)
             .WithOne(al => al.Artist)
             .HasForeignKey(al => al.ArtistId);

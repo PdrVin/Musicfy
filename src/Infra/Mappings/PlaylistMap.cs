@@ -19,6 +19,9 @@ public class PlaylistMap : IEntityTypeConfiguration<Playlist>
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.HasIndex(p => p.Name)
+            .IsUnique();
+
         builder.HasMany(p => p.Musics)
             .WithMany(m => m.Playlists)
             .UsingEntity(j => j.ToTable("MusicPlaylists"));
