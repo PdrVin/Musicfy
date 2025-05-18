@@ -1,0 +1,81 @@
+﻿@using Application.DTOs
+@using Domain.Entities
+
+@model IEnumerable<Playlist>
+
+@{
+    ViewData["Title"] = "Playlists";
+}
+
+<div class="text-center gap-2 col-10 mx-auto">
+
+    @if (TempData["MessageSuccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["MessageSuccess"]
+            <button type="button" class="btn btn-danger btn-md close-alert" arial-label="Close">
+                <i class="bi bi-x-lg"></i></button>
+        </div>
+    }
+
+    @if (TempData["MessageError"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["MessageError"]
+            <button type="button" class="btn btn-danger btn-md close-alert" arial-label="Close">
+                <i class="bi bi-x-lg"></i></button>
+        </div>
+    }
+
+    <h2 class="display-4 m-4">Playlists</h2>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+        <a class="btn btn-primary" role="button" asp-controller="Playlist" asp-action="Create"
+            title="Adicionar Playlist">
+            <i class="bi bi-plus-lg"></i></a>
+    </div>
+
+    <table class="table table-sm mt-3 border border-success text-light" id="table-Playlist">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Músicas</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int rowNumber = 1;
+                foreach (Playlist playlist in Model)
+                {
+                    <tr>
+                        <th scope="row">@rowNumber</th>
+                        <td>@playlist.Name</td>
+                        <td>@(playlist.Musics?.Count ?? 0)</td>
+                        <td>
+                            <div class="btn-group-sm" role="group">
+                                <a role="button" class="btn btn-primary" title="Editar"
+                                    asp-route-id="@playlist.Id" asp-controller="Playlist" asp-action="Edit">
+                                    <i class="bi bi-pencil"></i></a>
+                                <a role="button" class="btn btn-danger" title="Deletar"
+                                    asp-route-id="@playlist.Id" asp-controller="Playlist" asp-action="DeleteConfirm">
+                                    <i class="bi bi-trash3"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    rowNumber++;
+                }
+            }
+            else
+            {
+                <tr class="odd">
+                    <td valign="top" colspan="5">
+                        Nenhuma Playlist encontrada.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

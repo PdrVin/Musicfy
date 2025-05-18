@@ -7,5 +7,5 @@ namespace Application.Interfaces;
 public interface IPlaylistService : IService<PlaylistDto, Playlist>
 {
     Task AddPlaylistAsync(PlaylistDto playlistDto);
-    Task UpdatePlaylistAsync(PlaylistDto playlistDto);
+    Task UpdatePlaylistAsync(Playlist playlist);
 }

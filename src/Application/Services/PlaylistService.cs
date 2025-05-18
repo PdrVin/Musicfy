@@ -34,13 +34,12 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task UpdatePlaylistAsync(PlaylistDto playlistDto)
+    public async Task UpdatePlaylistAsync(Playlist editPlaylist)
     {
-        Playlist playlist = new()
-        {
-            Name = playlistDto.Name,
-            UpdatedAt = DateTime.Now,
-        };
+        Playlist playlist = _playlistRepository.GetByIdAsync(editPlaylist.Id).Result;
+
+        playlist.Name = editPlaylist.Name;
+        playlist.UpdatedAt = DateTime.Now;
 
         _playlistRepository.Update(playlist);
         await _unitOfWork.CommitAsync();

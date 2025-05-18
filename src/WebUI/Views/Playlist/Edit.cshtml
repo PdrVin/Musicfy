@@ -1,0 +1,22 @@
+@using Domain.Entities
+
+@model Playlist
+@{
+    ViewData["Title"] = "Editar Playlist";
+}
+
+<div class="text-center">
+    <h2 class="display-4">Editar Playlist</h2>
+</div>
+
+<form asp-controller="Playlist" asp-action="Edit" method="post">
+    <div class="mb-3 bg-body">
+        <label for="name" class="form-label">Nome da Playlist</label>
+        <input type="text" asp-for="Name" class="form-control bg-body text-white"
+            placeholder="Digite o Nome da Playlist">
+        @Html.ValidationMessageFor(x => x.Name)
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a class="btn btn-secondary" role="button" asp-controller="Playlist" asp-action="Index">Voltar</a>
+</form>
