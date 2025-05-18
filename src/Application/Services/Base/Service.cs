@@ -48,4 +48,9 @@ public class Service<TDto, TEntity> : IService<TDto, TEntity>
         await _unitOfWork.CommitAsync();
         await Task.CompletedTask;
     }
+
+    public async Task<int> CountAsync()
+    {
+        return await _repository.CountAsync();
+    }
 }

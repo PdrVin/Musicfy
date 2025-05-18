@@ -10,4 +10,5 @@ public interface IArtistService : IService<ArtistDto, Artist>
     Task AddArtistAsync(ArtistDto artistDto);
     Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos);
     Task UpdateArtistAsync(Artist artist);
+    Task<List<Artist>> GetTopArtistsByMusicAsync(int top);
 }

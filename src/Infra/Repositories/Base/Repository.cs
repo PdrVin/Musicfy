@@ -107,4 +107,9 @@ public class Repository<T>
     {
         _context?.Dispose();
     }
+
+    public async Task<int> CountAsync()
+    {
+        return await Entities.CountAsync();
+    }
 }

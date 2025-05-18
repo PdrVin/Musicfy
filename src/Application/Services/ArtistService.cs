@@ -66,4 +66,9 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
 
         await Task.CompletedTask;
     }
+
+    public async Task<List<Artist>> GetTopArtistsByMusicAsync(int top)
+    {
+        return await _artistRepository.GetTopArtistsByMusicAsync(top);
+    }
 }

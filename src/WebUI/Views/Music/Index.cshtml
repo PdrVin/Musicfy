@@ -27,7 +27,7 @@
         </div>
     }
 
-    <h2 class="display-4">Músicas</h2>
+    <h2 class="display-4 m-4">Músicas</h2>
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
         <a class="btn btn-primary" role="button" asp-controller="Music" asp-action="Create">
@@ -59,6 +59,9 @@
                         <td>@music.Artist!.Name</td>
                         <td>
                             <div class="btn-group-sm" role="group">
+                                <a class="btn btn-success" role="button" title="Adicionar a uma Playlist"
+                                    asp-route-id="@music.Id" asp-controller="" asp-action="">
+                                    <i class="bi bi-music-note-list"></i></a>
                                 <a role="button" class="btn btn-primary" aria-label="Editar"
                                     asp-route-id="@music.Id" asp-controller="Music" asp-action="Edit">
                                     <i class="bi bi-pencil"></i></a>

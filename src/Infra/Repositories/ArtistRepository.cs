@@ -27,4 +27,13 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
     {
         return await _context.Artists.FirstOrDefaultAsync(a => a.Name == name);
     }
+
+    public async Task<List<Artist>> GetTopArtistsByMusicAsync(int top)
+    {
+        return await _context.Artists
+            .Include(a => a.Musics)
+            .OrderByDescending(a => a.Musics.Count)
+            .Take(top)
+            .ToListAsync();
+    }
 }

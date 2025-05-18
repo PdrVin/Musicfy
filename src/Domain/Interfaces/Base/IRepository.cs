@@ -1,6 +1,7 @@
 ﻿using Domain.Entities.Base;
 
 namespace Domain.Interfaces.Base;
+
 public interface IRepository<T> where T : IEntity
 {
     Task<IEnumerable<T>> GetAllAsync();
@@ -9,4 +10,5 @@ public interface IRepository<T> where T : IEntity
     Task SaveRangeAsync(IEnumerable<T> entities);
     void Update(T entity);
     void Delete(Guid id);
+    Task<int> CountAsync();
 }

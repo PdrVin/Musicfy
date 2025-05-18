@@ -10,4 +10,5 @@ public interface IService<TDto, TEntity>
     Task AddAsync(TEntity entity);
     Task UpdateAsync(TEntity entity);
     Task DeleteAsync(Guid id);
+    Task<int> CountAsync();
 }
