@@ -29,6 +29,7 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
         return await _context.Albums
             .Include(a => a.Artist)
             .Include(a => a.Musics)
+            .AsNoTracking()
             .FirstOrDefaultAsync(a => a.Id == id);
     }
 

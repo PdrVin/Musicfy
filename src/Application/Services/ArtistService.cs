@@ -51,7 +51,7 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
 
     public async Task UpdateArtistAsync(Artist editArtist)
     {
-        Artist artist = _artistRepository.GetByIdAsync(editArtist.Id).Result;
+        Artist artist = await _artistRepository.GetByIdAsync(editArtist.Id);
 
         artist.Name = editArtist.Name;
         artist.UpdatedAt = DateTime.Now;

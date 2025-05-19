@@ -25,7 +25,11 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
 
     public async Task<Artist?> GetByNameAsync(string name)
     {
-        return await _context.Artists.FirstOrDefaultAsync(a => a.Name == name);
+        return await _context.Artists
+            .Include(a => a.Albums)
+            .Include(a => a.Musics)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.Name == name);
     }
 
     public async Task<List<Artist>> GetByNamesAsync(IEnumerable<string> names)

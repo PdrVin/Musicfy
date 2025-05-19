@@ -36,7 +36,7 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
 
     public async Task UpdatePlaylistAsync(Playlist editPlaylist)
     {
-        Playlist playlist = _playlistRepository.GetByIdAsync(editPlaylist.Id).Result;
+        Playlist playlist = await _playlistRepository.GetByIdAsync(editPlaylist.Id);
 
         playlist.Name = editPlaylist.Name;
         playlist.UpdatedAt = DateTime.Now;
