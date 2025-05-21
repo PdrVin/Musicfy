@@ -32,4 +32,11 @@ public class MusicRepository : Repository<Music>, IMusicRepository
             .Include(m => m.Artist)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
+
+    public async Task<List<Music>> GetManyByIdsAsync(List<Guid> ids)
+    {
+        return await _context.Musics
+            .Where(m => ids.Contains(m.Id))
+            .ToListAsync();
+    }
 }

@@ -53,11 +53,12 @@
                     <tr>
                         <th scope="row">@rowNumber</th>
                         <td>@playlist.Name</td>
-                        <td>@(playlist.Musics?.Count ?? 0)</td>
+                        <td>@playlist.Musics!.Count</td>
                         <td>
                             <div class="btn-group-sm" role="group">
                                 <a class="btn btn-success" role="button" title="Adicionar Música"
-                                    asp-controller="Music" asp-action="Create">
+                                    asp-route-id="@playlist.Id" asp-controller="Playlist"
+                                    asp-action="AddMusics" >
                                     <i class="bi bi-music-note-beamed"></i></a>
                                 <a role="button" class="btn btn-primary" title="Editar"
                                     asp-route-id="@playlist.Id" asp-controller="Playlist" asp-action="Edit">

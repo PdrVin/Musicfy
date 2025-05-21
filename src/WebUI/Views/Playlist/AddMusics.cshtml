@@ -1,0 +1,66 @@
+@model MusicsToPlaylistViewModel
+@{
+    ViewData["Title"] = "Adicionar Músicas à Playlist";
+}
+
+<div class="text-center">
+    <h2 class="display-4 m-4">Adicionar Músicas à Playlist: <b>@Model.PlaylistName</b></h2>
+</div>
+
+<form asp-action="AddMusics" method="post">
+    <input type="hidden" asp-for="PlaylistId" />
+
+    <select asp-for="SelectedMusicIds" asp-items="Model.AvailableMusics" multiple
+        class="form-control bg-body text-white select2 select2-dark-mode">
+    </select>
+
+    <button type="submit" class="btn btn-primary mt-3">
+        <i class="bi bi-plus-circle"></i> Adicionar à Playlist
+    </button>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Selecione as músicas...",
+                width: '100%',
+                allowClear: true
+            });
+        });
+    </script>
+}
+
+<style>
+/* Container principal */
+.select2-container--default .select2-selection--multiple {
+    background-color: #212529; /* dark bg */
+    color: #fff;
+    border: 1px solid #bbb;
+}
+
+/* Itens selecionados */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #343a40;
+    border: 1px solid #bbb;
+    color: #fff;
+}
+
+/* Placeholder e texto digitado */
+.select2-container--default .select2-search--inline .select2-search__field {
+    background-color: transparent;
+    color: #fff;
+}
+
+/* Dropdown */
+.select2-container--default .select2-results > .select2-results__options {
+    background-color: #212529;
+    color: #fff;
+}
+
+/* Hover nos itens do dropdown */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #373d42;
+    color: #fff;
+}
+</style>

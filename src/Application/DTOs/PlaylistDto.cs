@@ -25,6 +25,9 @@ public class MusicInPlaylistDto
     [Display(Name = "Duração")]
     public TimeSpan Duration { get; set; }
 
+    [Display(Name = "Álbum")]
+    public string AlbumTitle { get; set; }
+
     [Display(Name = "Artista")]
     public string ArtistName { get; set; }
 }

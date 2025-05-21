@@ -2,18 +2,37 @@ using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTOs;
 using Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebUI.Controllers;
 
 public class MusicController : Controller
 {
     private readonly IMusicService _musicService;
+    private readonly IPlaylistService _playlistService;
 
-    public MusicController(IMusicService musicService) =>
+    public MusicController(
+        IMusicService musicService,
+        IPlaylistService playlistService
+    )
+    {
         _musicService = musicService;
+        _playlistService = playlistService;
+    }
 
-    public IActionResult Index() =>
-        View(_musicService.GetAllWithDataAsync().Result);
+    public async Task<IActionResult> Index()
+    {
+        var musics = await _musicService.GetAllWithDataAsync();
+        var playlists = await _playlistService.GetAllAsync();
+
+        ViewBag.Playlists = playlists.Select(p => new SelectListItem
+        {
+            Text = p.Name,
+            Value = p.Id.ToString()
+        }).ToList();
+
+        return View(musics);
+    }
 
     public IActionResult Create(string? artistName, string? albumTitle)
     {
@@ -39,18 +58,16 @@ public class MusicController : Controller
         {
             _musicService.AddManyMusicsAsync(musics);
             TempData["MessageSuccess"] = "Músicas cadastradas com sucesso.";
-            return RedirectToAction("Index", "Music");
         }
         catch (InvalidOperationException ex)
         {
             TempData["MessageError"] = $"Erro: {ex.Message}";
-            return RedirectToAction("Index");
         }
         catch (Exception ex)
         {
             TempData["MessageError"] = $"Erro inesperado: {ex.Message}";
-            return RedirectToAction("Index");
         }
+        return RedirectToAction("Index");
     }
 
     public IActionResult Edit(Guid id) =>
@@ -65,13 +82,12 @@ public class MusicController : Controller
         {
             _musicService.UpdateMusicAsync(music);
             TempData["MessageSuccess"] = "Música atualizada com sucesso.";
-            return RedirectToAction("Index");
         }
         catch (Exception error)
         {
             TempData["MessageError"] = $"Erro no processo de Atualização: {error.Message}";
-            return RedirectToAction("Index");
         }
+        return RedirectToAction("Index");
     }
 
     public IActionResult DeleteConfirm(Guid id) =>
@@ -90,6 +106,26 @@ public class MusicController : Controller
         {
             TempData["MessageError"] = $"Erro no processo de Exclusão: {error.Message}";
         }
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddToPlaylist(Guid musicId, Guid playlistId)
+    {
+        try
+        {
+            await _playlistService.AddMusicToPlaylistAsync(musicId, playlistId);
+            TempData["Mensagem"] = "Música adicionada à playlist com sucesso.";
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["Mensagem"] = ex.Message;
+        }
+        catch (Exception)
+        {
+            TempData["Mensagem"] = "Erro ao adicionar música à playlist.";
+        }
+
         return RedirectToAction("Index");
     }
 }
