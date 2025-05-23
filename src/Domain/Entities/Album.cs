@@ -12,5 +12,5 @@ public class Album : EntityBase
     public Guid? ArtistId { get; set; }
     public Artist? Artist { get; set; }
 
-    public ICollection<Music>? Musics { get; set; } = new List<Music>();
+    public ICollection<Music>? Musics { get; set; }
 }

@@ -51,7 +51,7 @@
                 int rowNumber = 1;
                 foreach (Artist artist in Model)
                 {
-                    <tr>
+                    <tr class="align-middle">
                         <th scope="row">@rowNumber</th>
                         <td>@artist.Name</td>
                         <td>@(artist.Albums?.Count ?? 0)</td>

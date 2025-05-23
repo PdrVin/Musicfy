@@ -9,7 +9,7 @@
     <h2 class="text-center m-4">Dashboard</h2>
 
     <main class="row text-white text-center">
-        <section class="col-md-2 mb-2">
+        <section class="col-md-2 mb-4">
             <div class="card bg-body border-5 border-primary shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Artistas</h5>
@@ -18,7 +18,7 @@
             </div>
         </section>
 
-        <section class="col-md-2 mb-2">
+        <section class="col-md-2 mb-4">
             <div class="card bg-body border-5 border-success shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Álbuns</h5>
@@ -27,7 +27,7 @@
             </div>
         </section>
 
-        <section class="col-md-2 mb-2">
+        <section class="col-md-2 mb-4">
             <div class="card bg-body border-5 border-warning shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Músicas</h5>
@@ -36,7 +36,7 @@
             </div>
         </section>
 
-        <section class="col-md-2 mb-2">
+        <section class="col-md-2 mb-4">
             <div class="card bg-body border-5 border-danger shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Playlists</h5>
@@ -46,8 +46,8 @@
         </section>
 
         <section class="col-md-4 mb-4">
-            <h3 class="text-center">Top 5 Artistas</h3>
-            <table class="table border border-success table-striped table-dark mt-3">
+            <h3 class="text-center">Top 10 Artistas</h3>
+            <table class="table table-sm border border-success table-striped table-dark mt-3">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -58,7 +58,7 @@
                 <tbody>
                     @for (int i = 0; i < Model.TopArtistsByMusicCount.Count; i++)
                     {
-                        <tr>
+                        <tr class="align-middle">
                             <td>@(i + 1)</td>
                             <td>@Model.TopArtistsByMusicCount[i].Name</td>
                             <td>@Model.TopArtistsByMusicCount[i].Musics!.Count</td>

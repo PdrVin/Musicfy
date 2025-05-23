@@ -19,6 +19,7 @@
                 <input type="text" name="[@i].Name" class="form-control bg-body text-white"
                     placeholder="Digite o Nome do Artista"
                     value="@(Model != null && Model.Count > i ? Model[i].Name : "")" />
+                @Html.ValidationMessageFor(x => x[i].Name)
             </div>
         }
     </div>

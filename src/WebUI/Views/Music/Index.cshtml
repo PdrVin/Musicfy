@@ -51,10 +51,10 @@
                 int rowNumber = 1;
                 foreach (Music music in Model)
                 {
-                    <tr>
+                    <tr class="align-middle">
                         <th scope="row">@rowNumber</th>
                         <td>@music.Title</td>
-                        <td>@(music.Duration.ToString(@"hh\:mm"))</td>
+                        <td>@music.Duration.ToString(@"mm\:ss")</td>
                         <td>@music.Album!.Title</td>
                         <td>@music.Artist!.Name</td>
                         <td>

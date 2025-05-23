@@ -31,23 +31,6 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
     public async Task<Album?> GetByIdWithDataAsync(Guid id) =>
         await _albumRepository.GetByIdWithDataAsync(id);
 
-    public async Task AddAlbumAsync(AlbumDto albumDto)
-    {
-        Artist? artist = await _artistRepository.GetByNameAsync(albumDto.ArtistName)
-            ?? throw new InvalidOperationException("Artist NotFound.");
-
-        Album album = new()
-        {
-            Title = albumDto.Title,
-            ReleaseDate = albumDto.ReleaseDate,
-            ArtistId = artist.Id,
-            CreatedAt = DateTime.Now,
-        };
-
-        await _albumRepository.SaveAsync(album);
-        await _unitOfWork.CommitAsync();
-    }
-
     public async Task AddManyAlbumsAsync(IEnumerable<AlbumDto> albumDtos)
     {
         var artistNames = albumDtos.Select(dto => dto.ArtistName).Distinct().ToList();

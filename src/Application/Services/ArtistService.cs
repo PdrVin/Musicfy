@@ -25,18 +25,6 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
     public async Task<IEnumerable<Artist>> GetAllArtistsWithDataAsync() =>
         await _artistRepository.GetAllWithDataAsync();
 
-    public async Task AddArtistAsync(ArtistDto artistDto)
-    {
-        Artist artist = new()
-        {
-            Name = artistDto.Name,
-            CreatedAt = DateTime.Now,
-        };
-
-        await _artistRepository.SaveAsync(artist);
-        await _unitOfWork.CommitAsync();
-    }
-
     public async Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos)
     {
         var artists = artistDtos.Select(dto =>

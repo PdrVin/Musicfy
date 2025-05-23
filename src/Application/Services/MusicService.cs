@@ -34,27 +34,6 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
     public async Task<Music?> GetByIdWithDataAsync(Guid id) =>
         await _musicRepository.GetByIdWithDataAsync(id);
 
-    public async Task AddMusicAsync(MusicDto musicDto)
-    {
-        Album? album = await _albumRepository.GetByTitleAsync(musicDto.AlbumTitle)
-            ?? throw new InvalidOperationException("Album NotFound.");
-
-        Artist? artist = await _artistRepository.GetByNameAsync(musicDto.ArtistName)
-            ?? throw new InvalidOperationException("Artist NotFound.");
-
-        Music music = new()
-        {
-            Title = musicDto.Title,
-            Duration = musicDto.Duration,
-            AlbumId = album.Id,
-            ArtistId = artist.Id,
-            CreatedAt = DateTime.Now,
-        };
-
-        await _musicRepository.SaveAsync(music);
-        await _unitOfWork.CommitAsync();
-    }
-
     public async Task AddManyMusicsAsync(IEnumerable<MusicDto> musicDtos)
     {
         var artistNames = musicDtos.Select(dto => dto.ArtistName).Distinct().ToList();
@@ -77,7 +56,7 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
             return new Music
             {
                 Title = dto.Title,
-                Duration = dto.Duration,
+                Duration = new TimeSpan(0, dto.Duration.Hours, dto.Duration.Minutes),
                 ArtistId = artist.Id,
                 AlbumId = album.Id,
                 CreatedAt = DateTime.Now,
@@ -100,7 +79,7 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
             ?? throw new InvalidOperationException("Artist NotFound.");
 
         music.Title = editMusic.Title;
-        music.Duration = editMusic.Duration;
+        music.Duration = new TimeSpan(0, editMusic.Duration.Hours, editMusic.Duration.Minutes);
         music.AlbumId = album.Id;
         music.ArtistId = artist.Id;
         music.UpdatedAt = DateTime.Now;

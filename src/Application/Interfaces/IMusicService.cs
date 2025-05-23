@@ -8,7 +8,6 @@ public interface IMusicService : IService<MusicDto, Music>
 {
     Task<IEnumerable<Music>> GetAllWithDataAsync();
     Task<Music?> GetByIdWithDataAsync(Guid id);
-    Task AddMusicAsync(MusicDto musicDto);
     Task AddManyMusicsAsync(IEnumerable<MusicDto> musicDtos);
     Task UpdateMusicAsync(Music editMusic);
 }
