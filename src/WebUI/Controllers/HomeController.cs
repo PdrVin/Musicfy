@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
+using Domain.Entities;
 using WebUI.Models;
 
 namespace WebUI.Controllers;
@@ -26,14 +27,37 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var model = new DashboardViewModel
+        IEnumerable<Artist> artists = await _artistService.GetAllWithDataAsync();
+        IEnumerable<Album> albums = await _albumService.GetAllWithDataAsync();
+        IEnumerable<Music> musics = await _musicService.GetAllWithDataAsync();
+        IEnumerable<Playlist> playlists = await _playlistService.GetAllWithDataAsync();
+        IEnumerable<Artist> topArtistsByMusic = await _artistService.GetTopArtistsByMusicAsync(10);
+
+        DashboardViewModel model = new()
         {
-            TotalArtists = await _artistService.CountAsync(),
-            TotalAlbums = await _albumService.CountAsync(),
-            TotalMusics = await _musicService.CountAsync(),
-            TotalPlaylists = await _playlistService.CountAsync(),
-            TopArtistsByMusicCount = await _artistService.GetTopArtistsByMusicAsync(10)
+            TotalArtists = artists.Count(),
+            TotalAlbums = albums.Count(),
+            TotalMusics = musics.Count(),
+            TotalPlaylists = playlists.Count(),
+            TopArtistsByMusicCount = topArtistsByMusic.ToList()
         };
+
+        var topArtistMusicCounts = topArtistsByMusic
+            .ToDictionary(
+                a => a.Name,
+                a => a.Musics.Count
+            );
+
+        var otherArtists = artists
+            .Where(a => !topArtistsByMusic.Any(t => t.Id == a.Id));
+
+        var otherCount = otherArtists.Sum(a => a.Musics.Count);
+
+        if (otherCount > 0)
+            topArtistMusicCounts.Add("Outros", otherCount);
+
+        ViewBag.Labels = topArtistMusicCounts.Keys;
+        ViewBag.Values = topArtistMusicCounts.Values;
 
         return View(model);
     }

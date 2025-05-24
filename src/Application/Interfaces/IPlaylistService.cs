@@ -6,7 +6,7 @@ namespace Application.Interfaces;
 
 public interface IPlaylistService : IService<PlaylistDto, Playlist>
 {
-    Task<List<Playlist>> GetAllWithDataAsync();
+    Task<IEnumerable<Playlist>> GetAllWithDataAsync();
     Task AddPlaylistAsync(PlaylistDto playlistDto);
     Task UpdatePlaylistAsync(Playlist playlist);
     Task AddMusicToPlaylistAsync(Guid playlistId, Guid musicId);

@@ -22,7 +22,7 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<Artist>> GetAllArtistsWithDataAsync() =>
+    public async Task<IEnumerable<Artist>> GetAllWithDataAsync() =>
         await _artistRepository.GetAllWithDataAsync();
 
     public async Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos)
@@ -50,7 +50,7 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         await Task.CompletedTask;
     }
 
-    public async Task<List<Artist>> GetTopArtistsByMusicAsync(int top)
+    public async Task<IEnumerable<Artist>> GetTopArtistsByMusicAsync(int top)
     {
         return await _artistRepository.GetTopArtistsByMusicAsync(top);
     }

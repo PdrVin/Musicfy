@@ -3,69 +3,140 @@
 @model DashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
+    var topArtists = Model.TopArtistsByMusicCount;
 }
 
 <div class="section mt-4">
     <h2 class="text-center m-4">Dashboard</h2>
 
-    <main class="row text-white text-center">
-        <section class="col-md-2 mb-4">
-            <div class="card bg-body border-5 border-primary shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Artistas</h5>
-                    <p class="card-text display-6">@Model.TotalArtists</p>
+    <main class="container text-white text-center py-2">
+        <section class="row g-2">
+
+            <div class="col-8">
+                <div class="row g-2">
+
+                    <card class="col-md-3 mb-2">
+                        <div class="card bg-body border-5 border-primary shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Artistas</h5>
+                                <p class="card-text display-6">@Model.TotalArtists</p>
+                            </div>
+                        </div>
+                    </card>
+
+                    <card class="col-md-3 mb-2">
+                        <div class="card bg-body border-5 border-success shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Álbuns</h5>
+                                <p class="card-text display-6">@Model.TotalAlbums</p>
+                            </div>
+                        </div>
+                    </card>
+
+                    <card class="col-md-3 mb-2">
+                        <div class="card bg-body border-5 border-warning shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Músicas</h5>
+                                <p class="card-text display-6">@Model.TotalMusics</p>
+                            </div>
+                        </div>
+                    </card>
+
+                    <card class="col-md-3 mb-2">
+                        <div class="card bg-body border-5 border-danger shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Playlists</h5>
+                                <p class="card-text display-6">@Model.TotalPlaylists</p>
+                            </div>
+                        </div>
+                    </card>
+
+                    <graph class="row g-2">
+                        <div class="col-6 card bg-dark text-white">
+                            <canvas id="myDoughnutChart" height="250"></canvas>
+                        </div>
+
+                        <div class="col-6 card bg-dark text-white">
+                            <canvas id="myDoughnutChart" height="250"></canvas>
+                        </div>
+                    </graph>
+
                 </div>
             </div>
-        </section>
 
-        <section class="col-md-2 mb-4">
-            <div class="card bg-body border-5 border-success shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Álbuns</h5>
-                    <p class="card-text display-6">@Model.TotalAlbums</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="col-md-2 mb-4">
-            <div class="card bg-body border-5 border-warning shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Músicas</h5>
-                    <p class="card-text display-6">@Model.TotalMusics</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="col-md-2 mb-4">
-            <div class="card bg-body border-5 border-danger shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Playlists</h5>
-                    <p class="card-text display-6">@Model.TotalPlaylists</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="col-md-4 mb-4">
-            <h3 class="text-center">Top 10 Artistas</h3>
-            <table class="table table-sm border border-success table-striped table-dark mt-3">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Artista</th>
-                        <th>Músicas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 0; i < Model.TopArtistsByMusicCount.Count; i++)
-                    {
-                        <tr class="align-middle">
-                            <td>@(i + 1)</td>
-                            <td>@Model.TopArtistsByMusicCount[i].Name</td>
-                            <td>@Model.TopArtistsByMusicCount[i].Musics!.Count</td>
+            <div class="col-4 mb-4 py-2">
+                <h3 class="text-center">Top 10 Artistas</h3>
+                <table class="table table-sm border border-success table-striped table-dark">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Artista</th>
+                            <th>Músicas</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < topArtists.Count; i++)
+                        {
+                            <tr class="align-middle">
+                                <td>@(i + 1)</td>
+                                <td>@topArtists[i].Name</td>
+                                <td>@topArtists[i].Musics!.Count</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
         </section>
     </main>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('myDoughnutChart').getContext('2d');
+    const myDoughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: @Html.Raw(Json.Serialize(ViewBag.Labels)),
+            datasets: [{
+                label: 'Músicas',
+                data: @Html.Raw(Json.Serialize(ViewBag.Values)),
+                backgroundColor: [
+                    '#0d6efd', @* blue *@
+                    '#6610f2', @* indigo *@
+                    '#6f42c1', @* purple *@
+                    '#d63384', @* pink *@
+                    '#dc3545', @* red *@
+                    '#fd7e14', @* orange *@
+                    '#ffc107', @* yellow *@
+                    '#198754', @* green *@
+                    '#20c997', @* teal *@
+                    '#0dcaf0', @* cyan *@
+                    '#adb5bd', @* gray *@
+                ],
+                borderColor: '#121212',
+                borderWidth: 0.5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Músicas por Artista',
+                    fullSize: true,
+                    font: { size: 22, family: "Segoe UI" },
+                    color: "#fff"
+                },
+                legend: {
+                    labels: {
+                        font: { weight: 'lighter', size: 12 },
+                        color: 'white'
+                    }
+                }
+            }
+        }
+    });
+</script>

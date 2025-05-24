@@ -9,5 +9,5 @@ public class DashboardViewModel
     public int TotalArtists { get; set; }
     public int TotalPlaylists { get; set; }
 
-    public List<Artist> TopArtistsByMusicCount { get; set; } = new();
+    public List<Artist> TopArtistsByMusicCount { get; set; } = [];
 }

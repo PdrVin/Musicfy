@@ -25,7 +25,7 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<List<Playlist>> GetAllWithDataAsync() =>
+    public async Task<IEnumerable<Playlist>> GetAllWithDataAsync() =>
         await _playlistRepository.GetAllWithDataAsync();
 
     public async Task AddPlaylistAsync(PlaylistDto playlistDto)
@@ -77,7 +77,7 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
 
         foreach (var music in musics)
         {
-            if (!playlist.Musics.Any(m => m.Id == music.Id))
+            if (!playlist.Musics!.Any(m => m.Id == music.Id))
                 playlist.Musics.Add(music);
         }
 

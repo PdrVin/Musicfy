@@ -13,7 +13,7 @@ public class PlaylistRepository : Repository<Playlist>, IPlaylistRepository
     public PlaylistRepository(AppDbContext context) : base(context) =>
         _context = context;
 
-    public async Task<List<Playlist>> GetAllWithDataAsync()
+    public async Task<IEnumerable<Playlist>> GetAllWithDataAsync()
     {
         return await _context.Playlists
             .Include(p => p.Musics)

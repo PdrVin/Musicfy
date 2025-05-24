@@ -5,6 +5,6 @@ namespace Domain.Interfaces;
 
 public interface IPlaylistRepository : IRepository<Playlist>
 {
-    Task<List<Playlist>> GetAllWithDataAsync();
+    Task<IEnumerable<Playlist>> GetAllWithDataAsync();
     Task<Playlist?> GetByIdWithDataAsync(Guid id);
 }

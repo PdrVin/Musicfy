@@ -13,7 +13,7 @@ public class ArtistController : Controller
         _artistService = artistService;
 
     public IActionResult Index() =>
-        View(_artistService.GetAllArtistsWithDataAsync().Result);
+        View(_artistService.GetAllWithDataAsync().Result);
 
     public IActionResult Create() =>
         View();
