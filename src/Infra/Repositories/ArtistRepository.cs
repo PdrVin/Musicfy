@@ -8,14 +8,12 @@ namespace Infra.Repositories;
 
 public class ArtistRepository : Repository<Artist>, IArtistRepository
 {
-    private readonly AppDbContext _context;
-
-    public ArtistRepository(AppDbContext context) : base(context) =>
-        _context = context;
+    public ArtistRepository(AppDbContext context) : base(context)
+    { }
 
     public async Task<IEnumerable<Artist>> GetAllWithDataAsync()
     {
-        return await _context.Artists
+        return await Entities
             .Include(a => a.Albums)
             .Include(a => a.Musics)
             .OrderBy(a => a.Name)
@@ -25,7 +23,7 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
 
     public async Task<Artist?> GetByNameAsync(string name)
     {
-        return await _context.Artists
+        return await Entities
             .Include(a => a.Albums)
             .Include(a => a.Musics)
             .AsNoTracking()
@@ -34,7 +32,7 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
 
     public async Task<List<Artist>> GetByNamesAsync(IEnumerable<string> names)
     {
-        return await _context.Artists
+        return await Entities
             .Where(a => names.Contains(a.Name))
             .Distinct()
             .ToListAsync();
@@ -42,11 +40,38 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
 
     public async Task<List<Artist>> GetTopArtistsByMusicAsync(int top)
     {
-        return await _context.Artists
+        return await Entities
             .Include(a => a.Musics)
             .OrderByDescending(a => a.Musics.Count)
             .ThenByDescending(a => a.Albums.Count)
             .Take(top)
             .ToListAsync();
+    }
+
+    public async Task<(IEnumerable<Artist> Items, int TotalCount)> GetPaginatedAsync(
+        int pageNumber,
+        int pageSize,
+        string searchTerm = ""
+    )
+    {
+        var query = Entities
+            .Include(a => a.Albums)
+            .Include(a => a.Musics)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query = query.Where(a => a.Name.Contains(searchTerm));
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(a => a.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
     }
 }

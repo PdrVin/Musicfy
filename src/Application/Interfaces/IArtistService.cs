@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.Helpers.Pagination;
 using Application.Interfaces.Base;
 using Domain.Entities;
 
@@ -10,4 +11,6 @@ public interface IArtistService : IService<ArtistDto, Artist>
     Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos);
     Task UpdateArtistAsync(Artist artist);
     Task<IEnumerable<Artist>> GetTopArtistsByMusicAsync(int top);
+    Task<PagedResult<ArtistDto>> GetPaginatedArtistsAsync(
+        int pageNumber, int pageSize, string searchTerm = "");
 }

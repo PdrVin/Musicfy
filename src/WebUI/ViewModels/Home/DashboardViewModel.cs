@@ -1,6 +1,4 @@
-using Domain.Entities;
-
-namespace WebUI.Models;
+namespace WebUI.ViewModels.Home;
 
 public class DashboardViewModel
 {
@@ -9,5 +7,5 @@ public class DashboardViewModel
     public int TotalArtists { get; set; }
     public int TotalPlaylists { get; set; }
 
-    public List<Artist> TopArtistsByMusicCount { get; set; } = [];
+    public List<Domain.Entities.Artist> TopArtistsByMusicCount { get; set; } = [];
 }

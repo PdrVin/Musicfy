@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.Helpers.Pagination;
 using Application.Interfaces;
 using Application.Services.Base;
 using Domain.Entities;
@@ -28,7 +29,8 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
     public async Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos)
     {
         var artists = artistDtos.Select(dto =>
-            new Artist {
+            new Artist
+            {
                 Name = dto.Name,
                 CreatedAt = DateTime.Now,
             }).ToList();
@@ -53,5 +55,38 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
     public async Task<IEnumerable<Artist>> GetTopArtistsByMusicAsync(int top)
     {
         return await _artistRepository.GetTopArtistsByMusicAsync(top);
+    }
+
+    public async Task<PagedResult<ArtistDto>> GetPaginatedArtistsAsync(
+    int pageNumber, int pageSize, string searchTerm = "")
+    {
+        var (artists, totalItems) = await _artistRepository
+            .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
+
+        var artistDtos = artists.Select(a => new ArtistDto
+        {
+            Id = a.Id,
+            Name = a.Name,
+
+            Albums = a.Albums?.Select(album => new AlbumDto
+            {
+                Id = album.Id,
+                Title = album.Title
+            }).ToList(),
+
+            Musics = a.Musics?.Select(music => new MusicDto
+            {
+                Id = music.Id,
+                Title = music.Title
+            }).ToList()
+        }).ToList();
+
+        return new PagedResult<ArtistDto>
+        {
+            Items = artistDtos,
+            TotalItems = totalItems,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
     }
 }

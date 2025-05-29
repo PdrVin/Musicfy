@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Domain.Entities;
 using WebUI.Models;
+using WebUI.ViewModels.Home;
 
 namespace WebUI.Controllers;
 
@@ -42,6 +43,8 @@ public class HomeController : Controller
             TopArtistsByMusicCount = topArtistsByMusic.ToList()
         };
 
+        // var topArtistsByMusic2 = _artistService.GetTopArtistsByMusicAsync(20).Result;
+
         var topArtistMusicCounts = topArtistsByMusic
             .ToDictionary(
                 a => a.Name,
@@ -51,7 +54,7 @@ public class HomeController : Controller
         var otherArtists = artists
             .Where(a => !topArtistsByMusic.Any(t => t.Id == a.Id));
 
-        var otherCount = otherArtists.Sum(a => a.Musics.Count);
+        var otherCount = otherArtists.Sum(a => a.Musics.Count > 0 ? a.Musics.Count : 0);
 
         if (otherCount > 0)
             topArtistMusicCounts.Add("Outros", otherCount);

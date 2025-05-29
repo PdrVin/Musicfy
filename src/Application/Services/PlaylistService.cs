@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.Helpers.Pagination;
 using Application.Interfaces;
 using Application.Services.Base;
 using Domain.Entities;
@@ -82,5 +83,30 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
         }
 
         await _unitOfWork.CommitAsync();
+    }
+
+    public async Task<PagedResult<PlaylistDto>> GetPaginatedPlaylistsAsync(int pageNumber, int pageSize, string searchTerm = "")
+    {
+        var (playlists, totalItems) = await _playlistRepository.GetPaginatedAsync(pageNumber, pageSize, searchTerm);
+
+        var playlistsDTOs = playlists.Select(a => new PlaylistDto
+        {
+            Id = a.Id,
+            Name = a.Name,
+            
+            Musics = a.Musics?.Select(music => new MusicInPlaylistDto
+            {
+                Id = music.Id,
+                Title = music.Title
+            }).ToList()
+        }).ToList();
+
+        return new PagedResult<PlaylistDto>
+        {
+            Items = playlistsDTOs,
+            TotalItems = totalItems,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
     }
 }

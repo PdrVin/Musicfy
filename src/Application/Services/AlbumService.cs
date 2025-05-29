@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.Helpers.Pagination;
 using Application.Interfaces;
 using Application.Services.Base;
 using Domain.Entities;
@@ -73,5 +74,33 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         await _unitOfWork.CommitAsync();
 
         await Task.CompletedTask;
+    }
+
+    public async Task<PagedResult<AlbumDto>> GetPaginatedAlbumsAsync(int pageNumber, int pageSize, string searchTerm = "")
+    {
+        var (albums, totalItems) = await _albumRepository.GetPaginatedAsync(pageNumber, pageSize, searchTerm);
+
+        var albumsDTOs = albums.Select(a => new AlbumDto
+        {
+            Id = a.Id,
+            Title = a.Title,
+            ReleaseDate = a.ReleaseDate,
+            ArtistId = a.ArtistId ?? Guid.Empty,
+            ArtistName = a.Artist.Name,
+
+            Musics = a.Musics?.Select(music => new MusicDto
+            {
+                Id = music.Id,
+                Title = music.Title
+            }).ToList()
+        }).ToList();
+
+        return new PagedResult<AlbumDto>
+        {
+            Items = albumsDTOs,
+            TotalItems = totalItems,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
     }
 }

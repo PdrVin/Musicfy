@@ -9,4 +9,6 @@ public interface IAlbumRepository : IRepository<Album>
     Task<Album?> GetByIdWithDataAsync(Guid id);
     Task<Album?> GetByTitleAsync(string title);
     Task<List<Album>> GetByTitlesAsync(IEnumerable<string> titles);
+    Task<(IEnumerable<Album> Items, int TotalCount)> GetPaginatedAsync(
+        int pageNumber, int pageSize, string searchTerm = "");
 }

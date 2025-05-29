@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace WebUI.Models;
+namespace WebUI.ViewModels.Playlist;
 
 public class MusicsToPlaylistViewModel
 {

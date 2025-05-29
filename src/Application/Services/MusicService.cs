@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.Helpers.Pagination;
 using Application.Interfaces;
 using Application.Services.Base;
 using Domain.Entities;
@@ -88,5 +89,29 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
         await _unitOfWork.CommitAsync();
 
         await Task.CompletedTask;
+    }
+
+    public async Task<PagedResult<MusicDto>> GetPaginatedMusicsAsync(int pageNumber, int pageSize, string searchTerm = "")
+    {
+        var (musics, totalItems) = await _musicRepository.GetPaginatedAsync(pageNumber, pageSize, searchTerm);
+
+        var musicsDTOs = musics.Select(a => new MusicDto
+        {
+            Id = a.Id,
+            Title = a.Title,
+            Duration = a.Duration,
+            AlbumId = a.AlbumId ?? Guid.Empty,
+            AlbumTitle = a.Album.Title,
+            ArtistId = a.ArtistId ?? Guid.Empty,
+            ArtistName = a.Artist.Name
+        }).ToList();
+
+        return new PagedResult<MusicDto>
+        {
+            Items = musicsDTOs,
+            TotalItems = totalItems,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
     }
 }

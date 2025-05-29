@@ -4,6 +4,8 @@ namespace Application.DTOs;
 
 public class MusicDto
 {
+    public Guid? Id { get; set; }
+
     [Required(ErrorMessage = "O título da música é obrigatório.")]
     [StringLength(50, ErrorMessage = "O título da música deve ter no máximo 50 caracteres.")]
     [Display(Name = "Título")]

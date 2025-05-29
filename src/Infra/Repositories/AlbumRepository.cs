@@ -8,14 +8,12 @@ namespace Infra.Repositories;
 
 public class AlbumRepository : Repository<Album>, IAlbumRepository
 {
-    private readonly AppDbContext _context;
-
-    public AlbumRepository(AppDbContext context) : base(context) =>
-        _context = context;
+    public AlbumRepository(AppDbContext context) : base(context)
+    { }
 
     public async Task<IEnumerable<Album>> GetAllWithDataAsync()
     {
-        return await _context.Albums
+        return await Entities
             .Include(a => a.Artist)
             .Include(a => a.Musics)
             .OrderBy(a => a.Artist.Name)
@@ -26,7 +24,7 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
 
     public async Task<Album?> GetByIdWithDataAsync(Guid id)
     {
-        return await _context.Albums
+        return await Entities
             .Include(a => a.Artist)
             .Include(a => a.Musics)
             .AsNoTracking()
@@ -35,14 +33,46 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
 
     public async Task<Album?> GetByTitleAsync(string title)
     {
-        return await _context.Albums.FirstOrDefaultAsync(a => a.Title == title);
+        return await Entities
+            .FirstOrDefaultAsync(a => a.Title == title);
     }
 
     public async Task<List<Album>> GetByTitlesAsync(IEnumerable<string> titles)
     {
-        return await _context.Albums
+        return await Entities
             .Where(a => titles.Contains(a.Title))
             .Distinct()
             .ToListAsync();
+    }
+
+    public async Task<(IEnumerable<Album> Items, int TotalCount)> GetPaginatedAsync(
+        int pageNumber,
+        int pageSize,
+        string searchTerm = ""
+    )
+    {
+        var query = Entities
+            .Include(a => a.Artist)
+            .Include(a => a.Musics)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query = query.Where(a =>
+                a.Title.Contains(searchTerm) ||
+                a.Artist.Name.Contains(searchTerm)
+            );
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(a => a.Title)
+            .ThenBy(a => a.Artist.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
     }
 }

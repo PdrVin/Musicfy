@@ -39,4 +39,37 @@ public class MusicRepository : Repository<Music>, IMusicRepository
             .Where(m => ids.Contains(m.Id))
             .ToListAsync();
     }
+
+    public async Task<(IEnumerable<Music> Items, int TotalCount)> GetPaginatedAsync(
+        int pageNumber,
+        int pageSize,
+        string searchTerm = ""
+    )
+    {
+        var query = Entities
+            .Include(a => a.Album)
+            .Include(a => a.Artist)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query = query.Where(a =>
+                a.Title.Contains(searchTerm) ||
+                a.Album.Title.Contains(searchTerm) ||
+                a.Artist.Name.Contains(searchTerm)
+            );
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(a => a.Title)
+            .ThenBy(a => a.Album.Title)
+            .ThenBy(a => a.Artist.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
+    }
 }
