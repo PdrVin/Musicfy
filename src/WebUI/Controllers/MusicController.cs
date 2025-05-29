@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.DTOs;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WebUI.ViewModels.Music;
 
 namespace WebUI.Controllers;
 
@@ -20,9 +21,11 @@ public class MusicController : Controller
         _playlistService = playlistService;
     }
 
-    public async Task<IActionResult> Index()
+    [HttpGet]
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 15, string searchTerm = "")
     {
-        var musics = await _musicService.GetAllWithDataAsync();
+        var paginatedMusics = await _musicService.GetPaginatedMusicsAsync(pageNumber, pageSize, searchTerm);
+
         var playlists = await _playlistService.GetAllAsync();
 
         ViewBag.Playlists = playlists.Select(p => new SelectListItem
@@ -31,7 +34,14 @@ public class MusicController : Controller
             Value = p.Id.ToString()
         }).ToList();
 
-        return View(musics);
+        return View(new MusicListViewModel
+        {
+            Musics = paginatedMusics.Items,
+            PageNumber = paginatedMusics.PageNumber,
+            PageSize = paginatedMusics.PageSize,
+            TotalItems = paginatedMusics.TotalItems,
+            SearchTerm = searchTerm
+        });
     }
 
     public IActionResult Create(string? artistName, string? albumTitle)

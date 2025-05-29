@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTOs;
 using Domain.Entities;
+using WebUI.ViewModels.Artist;
 
 namespace WebUI.Controllers;
 
@@ -12,8 +13,20 @@ public class ArtistController : Controller
     public ArtistController(IArtistService artistService) =>
         _artistService = artistService;
 
-    public IActionResult Index() =>
-        View(_artistService.GetAllWithDataAsync().Result);
+    [HttpGet]
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 20, string searchTerm = "")
+    {
+        var paginatedArtists = await _artistService.GetPaginatedArtistsAsync(pageNumber, pageSize, searchTerm);
+
+        return View(new ArtistListViewModel
+        {
+            Artists = paginatedArtists.Items,
+            PageNumber = paginatedArtists.PageNumber,
+            PageSize = paginatedArtists.PageSize,
+            TotalItems = paginatedArtists.TotalItems,
+            SearchTerm = searchTerm
+        });
+    }
 
     public IActionResult Create() =>
         View();

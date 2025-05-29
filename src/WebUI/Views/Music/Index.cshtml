@@ -1,13 +1,13 @@
 ﻿@using Application.DTOs
-@using Domain.Entities
+@using WebUI.ViewModels.Music
 
-@model IEnumerable<Music>
+@model MusicListViewModel
 
 @{
     ViewData["Title"] = "Músicas";
 }
 
-<div class="text-center gap-2 col-10 mx-auto">
+<div class="container mt-4 mx-auto">
 
     @if (TempData["MessageSuccess"] != null)
     {
@@ -27,90 +27,166 @@
         </div>
     }
 
-    <h2 class="display-4 m-4">Músicas</h2>
+    <div class="mb-4">
+        <h2>Gerenciamento de Músicas</h2>
+    </div>
 
-    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-        <a class="btn btn-primary" role="button" asp-controller="Music" asp-action="Create">
-            <i class="bi bi-plus-lg"></i></a>
-    </div><br>
+    <div class="card bg-body border-success">
+        <div class="card-body p-3">
 
-    <table class="table table-sm border border-success text-light" id="table-music">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Título</th>
-                <th scope="col">Duração</th>
-                <th scope="col">Álbum</th>
-                <th scope="col">Artista</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                int rowNumber = 1;
-                foreach (Music music in Model)
-                {
-                    <tr class="align-middle">
-                        <th scope="row">@rowNumber</th>
-                        <td>@music.Title</td>
-                        <td>@music.Duration.ToString(@"mm\:ss")</td>
-                        <td>@music.Album!.Title</td>
-                        <td>@music.Artist!.Name</td>
-                        <td>
-                            <div class="btn-group-sm" role="group">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-success btn-sm"
-                                        title="Adicionar à Playlist">
-                                        <i class="bi bi-music-note-list"></i>
-                                    </button>
+            <div class="d-none d-md-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0 text-white">Todos as Músicas ( @Model.TotalItems )</h6>
+                <div class="d-flex align-items-center">
 
-                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle dropdown-toggle-split"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="visually-hidden"></span>
-                                    </button>
+                    <div class="input-group me-2" style="width: 300px;">
+                        <input type="text" class="form-control bg-body text-white"
+                            placeholder="Pesquisar" value="@Model.SearchTerm" id="searchTerm">
+                        <span class="input-group-text btn-dark btn-outline-light">
+                            <i class="bi bi-search white"></i></span>
+                    </div>
 
-                                    <ul class="dropdown-menu bg-body">
-                                        @foreach (var playlist in ViewBag.Playlists as List<SelectListItem>)
-                                        {
-                                            <li>
-                                                <a href="#" class="dropdown-item text-white"
-                                                onclick="submitPlaylistForm('@music.Id', '@playlist.Value')">
-                                                    @playlist.Text
-                                                </a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
+                    <button class="btn btn-outline-light me-2 px-4"
+                        style="height: 40px;" onclick="applyFilter()">
+                        <i class="bi bi-funnel"></i> Filtros
+                    </button>
 
-                                <!-- Formulário oculto -->
-                                <form id="addToPlaylistForm" method="post" asp-controller="Music" asp-action="AddToPlaylist" style="display:none;">
-                                    <input type="hidden" name="musicId" id="formMusicId" />
-                                    <input type="hidden" name="playlistId" id="formPlaylistId" />
-                                </form>
+                    <a href="/Album/Create" class="btn btn-dark btn-outline-primary px-4"
+                        style="height: 40px;">
+                        <i class="bi bi-plus-lg"></i> Adicionar Música</a>
 
-                                <a role="button" class="btn btn-primary" aria-label="Editar"
-                                    asp-route-id="@music.Id" asp-controller="Music" asp-action="Edit">
-                                    <i class="bi bi-pencil"></i></a>
-                                <a role="button" class="btn btn-danger" aria-label="Deletar"
-                                    asp-route-id="@music.Id" asp-controller="Music" asp-action="DeleteConfirm">
-                                    <i class="bi bi-trash3"></i></a>
-                            </div>
-                        </td>
+                    <button id="deleteSelectedBtn" class="btn btn-outline-danger ms-2 px-4"
+                        style="height: 40px; display: none;" onclick="deleteSelected()">
+                        <i class="bi bi-trash"></i> Excluir Selecionados
+                    </button>
+                </div>
+            </div>
+
+            <table class="table table-borderless align-middle mb-0 text-light" id="table-music">
+                <thead style="background-color: #343a40; border-radius: 10px 10px 0 0;">
+                    <tr>
+                        <th scope="col" style="width: 2%; border-top-left-radius: 10px;">
+                            <input type="checkbox" id="selectAll">
+                        </th>
+                        <th scope="col" style="width: 30%;">Título</th>
+                        <th scope="col" class="d-none d-md-table-cell">Duração</th>
+                        <th scope="col" class="d-none d-md-table-cell">Álbum</th>
+                        <th scope="col" class="d-none d-md-table-cell">Artista</th>
+                        <th scope="col" style="width: 12%; border-top-right-radius: 10px;">Ações</th>
                     </tr>
-                    rowNumber++;
+                </thead>
+                <tbody>
+                    @foreach (var music in Model.Musics)
+                    {
+                        <tr class="align-middle" style="border-bottom: 1px solid #E0E0E0;">
+                            <td>
+                                <input type="checkbox" class="selectActivity" name="ids" value="@music.Id">
+                            </td>
+                            <td><div class="fw-bold">@music.Title</div></td>
+                            <td class="d-none d-md-table-cell">@music.Duration.ToString(@"mm\:ss")</td>
+                            <td class="d-none d-md-table-cell">@music.AlbumTitle</td>
+                            <td class="d-none d-md-table-cell">@music.ArtistName</td>
+                            <td>
+                                <div class="btn-group-sm" role="group">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-success btn-sm"
+                                            title="Adicionar à Playlist">
+                                            <i class="bi bi-music-note-list"></i>
+                                        </button>
+
+                                        <button type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                            class="btn btn-success btn-sm dropdown-toggle dropdown-toggle-split">
+                                            <span class="visually-hidden"></span>
+                                        </button>
+
+                                        <ul class="dropdown-menu bg-body">
+                                            @foreach (var playlist in ViewBag.Playlists as List<SelectListItem>)
+                                            {
+                                                <li>
+                                                    <a href="#" class="dropdown-item text-white"
+                                                    onclick="submitPlaylistForm('@music.Id', '@playlist.Value')">
+                                                        @playlist.Text
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <!-- Formulário oculto -->
+                                    <form id="addToPlaylistForm" method="post" style="display:none;"
+                                        asp-controller="Music" asp-action="AddToPlaylist">
+                                        <input type="hidden" name="musicId" id="formMusicId" />
+                                        <input type="hidden" name="playlistId" id="formPlaylistId" />
+                                    </form>
+
+                                    <a role="button" class="btn btn-primary" aria-label="Editar"
+                                        asp-route-id="@music.Id"
+                                        asp-controller="Music" asp-action="Edit">
+                                        <i class="bi bi-pencil"></i></a>
+                                    <a role="button" class="btn btn-danger" aria-label="Deletar"
+                                        asp-route-id="@music.Id"
+                                        asp-controller="Music" asp-action="DeleteConfirm">
+                                        <i class="bi bi-trash3"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <span class="text-muted">
+                        Mostrando @((Model.PageNumber - 1) * Model.PageSize + 1) 
+                        a @(Model.PageNumber * Model.PageSize) de @Model.TotalItems entradas
+                    </span>
+                </div>
+                @if (Model.TotalItems > 10)
+                {
+                    <nav aria-label="Navegação de página">
+                        <ul class="pagination mb-0">
+
+                            @if (Model.PageNumber > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" aria-label="Anterior"
+                                        href="@Url.Action("Index", new {
+                                            pageNumber = Model.PageNumber - 1,
+                                            pageSize = Model.PageSize,
+                                            searchTerm = Model.SearchTerm })">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            }
+
+                            @for (var i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                    <a class="page-link"
+                                        href="@Url.Action("Index", new { 
+                                            pageNumber = i,
+                                            pageSize = Model.PageSize,
+                                            searchTerm = Model.SearchTerm })">@i</a>
+                                </li>
+                            }
+
+                            @if (Model.PageNumber < Model.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" aria-label="Próximo"
+                                        href="@Url.Action("Index", new {
+                                            pageNumber = Model.PageNumber + 1,
+                                            pageSize = Model.PageSize,
+                                            searchTerm = Model.SearchTerm })">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
                 }
-            }
-            else
-            {
-                <tr class="odd">
-                    <td valign="top" colspan="5">
-                        Nenhuma Música encontrada.
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
@@ -120,5 +196,47 @@
             document.getElementById("formPlaylistId").value = playlistId;
             document.getElementById("addToPlaylistForm").submit();
         }
+    </script>
+    <script>
+        document.getElementById('selectAll').addEventListener('change', function () {
+            var checkboxes = document.querySelectorAll('.selectActivity');
+            var selectAll = this.checked;
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = selectAll;
+            });
+            toggleDeleteButton();
+        });
+
+        document.querySelectorAll('.selectActivity').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                toggleDeleteButton();
+            });
+        });
+
+        function toggleDeleteButton() {
+            var anyChecked = document.querySelectorAll('.selectActivity:checked').length > 0;
+            var deleteButtons = document.querySelectorAll('#deleteSelectedBtn');
+
+            deleteButtons.forEach(function (button) {
+                button.style.display = anyChecked ? 'inline-block' : 'none';
+            });
+        }
+
+        function deleteSelected() {
+            var form = document.getElementById('deleteForm');
+            form.submit();
+        }
+
+        function applyFilter() {
+            var searchTerm = document.getElementById('searchTerm').value;
+            var url = '@Url.Action("Index", new { pageNumber = 1, pageSize = Model.PageSize })';
+            window.location.href = url + '&searchTerm=' + encodeURIComponent(searchTerm);
+        }
+
+        document.getElementById('searchTerm').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                applyFilter();
+            }
+        });
     </script>
 }

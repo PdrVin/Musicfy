@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Application.Helpers.Pagination;
 using Application.Interfaces;
 using Application.DTOs;
 using Domain.Entities;
+using WebUI.ViewModels.Album;
 
 namespace WebUI.Controllers;
 
@@ -12,8 +14,20 @@ public class AlbumController : Controller
     public AlbumController(IAlbumService albumService) =>
         _albumService = albumService;
 
-    public IActionResult Index() =>
-        View(_albumService.GetAllWithDataAsync().Result);
+    [HttpGet]
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 15, string searchTerm = "")
+    {
+        var paginatedAlbums = await _albumService.GetPaginatedAlbumsAsync(pageNumber, pageSize, searchTerm);
+
+        return View(new AlbumListViewModel
+        {
+            Albums = paginatedAlbums.Items,
+            PageNumber = paginatedAlbums.PageNumber,
+            PageSize = paginatedAlbums.PageSize,
+            TotalItems = paginatedAlbums.TotalItems,
+            SearchTerm = searchTerm
+        });
+    }
 
     public IActionResult Create(string? artistName)
     {

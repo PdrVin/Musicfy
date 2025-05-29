@@ -1,4 +1,4 @@
-﻿@using WebUI.Models
+﻿@using WebUI.ViewModels.Home
 
 @model DashboardViewModel
 @{
@@ -52,21 +52,17 @@
                     </card>
 
                     <graph class="row g-2">
-                        <div class="col-6 card bg-dark text-white">
-                            <canvas id="myDoughnutChart" height="250"></canvas>
-                        </div>
-
-                        <div class="col-6 card bg-dark text-white">
-                            <canvas id="myDoughnutChart" height="250"></canvas>
+                        <div class="card col-8 bg-dark border-0 text-white mx-auto">
+                            <canvas id="myDoughnutChart"></canvas>
                         </div>
                     </graph>
 
                 </div>
             </div>
 
-            <div class="col-4 mb-4 py-2">
-                <h3 class="text-center">Top 10 Artistas</h3>
-                <table class="table table-sm border border-success table-striped table-dark">
+            <div class="card bg-body border-0 col-4 mb-4 mx-auto px-3">
+                <h3 class="text-center pb-2">Top 10 Artistas</h3>
+                <table class="table table-sm border border-3 border-success table-striped table-dark">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -117,7 +113,7 @@
                     '#adb5bd', @* gray *@
                 ],
                 borderColor: '#121212',
-                borderWidth: 0.5
+                borderWidth: 0
             }]
         },
         options: {
@@ -127,12 +123,14 @@
                     display: true,
                     text: 'Músicas por Artista',
                     fullSize: true,
-                    font: { size: 22, family: "Segoe UI" },
+                    font: { size: 28, family: "Segoe UI", weight: 'normal' },
                     color: "#fff"
                 },
                 legend: {
+                    position: "left",
                     labels: {
-                        font: { weight: 'lighter', size: 12 },
+                        boxWidth: 15,
+                        font: { weight: 'lighter' },
                         color: 'white'
                     }
                 }
