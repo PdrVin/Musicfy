@@ -21,7 +21,7 @@ public class Repository<T>
     {
         try
         {
-            return await Entities.AsNoTracking().ToListAsync();
+            return await Entities.AsNoTracking().AsQueryable( ).ToListAsync();
         }
         catch (Exception ex)
         {

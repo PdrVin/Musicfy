@@ -11,7 +11,7 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
     public ArtistRepository(AppDbContext context) : base(context)
     { }
 
-    public async Task<IEnumerable<Artist>> GetAllWithDataAsync()
+    public async Task<IEnumerable<Artist>> GetAllArtistsAsync()
     {
         return await Entities
             .Include(a => a.Albums)
@@ -30,20 +30,31 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
             .FirstOrDefaultAsync(a => a.Name == name);
     }
 
-    public async Task<List<Artist>> GetByNamesAsync(IEnumerable<string> names)
+    public async Task<Dictionary<string, Artist>> GetDictByNamesAsync(IEnumerable<string> names)
     {
         return await Entities
             .Where(a => names.Contains(a.Name))
             .Distinct()
-            .ToListAsync();
+            .AsNoTracking()
+            .ToDictionaryAsync(a => a.Name, StringComparer.OrdinalIgnoreCase);
     }
 
-    public async Task<List<Artist>> GetTopArtistsByMusicAsync(int top)
+    public async Task<IEnumerable<Artist>> GetTopArtistsByMusicAsync(int top)
     {
         return await Entities
             .Include(a => a.Musics)
             .OrderByDescending(a => a.Musics.Count)
             .ThenByDescending(a => a.Albums.Count)
+            .Take(top)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Artist>> GetTopArtistsByAlbumAsync(int top)
+    {
+        return await Entities
+            .Include(a => a.Albums)
+            .OrderByDescending(a => a.Albums.Count)
+            .ThenByDescending(a => a.Musics.Count)
             .Take(top)
             .ToListAsync();
     }

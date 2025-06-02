@@ -23,8 +23,8 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<Artist>> GetAllWithDataAsync() =>
-        await _artistRepository.GetAllWithDataAsync();
+    public async Task<IEnumerable<Artist>> GetAllArtistsAsync() =>
+        await _artistRepository.GetAllArtistsAsync();
 
     public async Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos)
     {
@@ -57,8 +57,13 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         return await _artistRepository.GetTopArtistsByMusicAsync(top);
     }
 
+    public async Task<IEnumerable<Artist>> GetTopArtistsByAlbumAsync(int top)
+    {
+        return await _artistRepository.GetTopArtistsByAlbumAsync(top);
+    }
+
     public async Task<PagedResult<ArtistDto>> GetPaginatedArtistsAsync(
-    int pageNumber, int pageSize, string searchTerm = "")
+        int pageNumber, int pageSize, string searchTerm = "")
     {
         var (artists, totalItems) = await _artistRepository
             .GetPaginatedAsync(pageNumber, pageSize, searchTerm);

@@ -8,22 +8,20 @@ namespace Infra.Repositories;
 
 public class PlaylistRepository : Repository<Playlist>, IPlaylistRepository
 {
-    private readonly AppDbContext _context;
+    public PlaylistRepository(AppDbContext context) : base(context)
+    { }
 
-    public PlaylistRepository(AppDbContext context) : base(context) =>
-        _context = context;
-
-    public async Task<IEnumerable<Playlist>> GetAllWithDataAsync()
+    public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync()
     {
-        return await _context.Playlists
+        return await Entities
             .Include(p => p.Musics)
             .AsNoTracking()
             .ToListAsync();
     }
 
-    public async Task<Playlist?> GetByIdWithDataAsync(Guid id)
+    public async Task<Playlist?> GetPlaylistByIdAsync(Guid id)
     {
-        return await _context.Playlists
+        return await Entities
             .Include(p => p.Musics)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
@@ -48,7 +46,7 @@ public class PlaylistRepository : Repository<Playlist>, IPlaylistRepository
         var totalCount = await query.CountAsync();
 
         var items = await query
-            .OrderByDescending(a => a.Name)
+            .OrderBy(a => a.Name)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

@@ -26,18 +26,16 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<Album>> GetAllWithDataAsync() =>
-        await _albumRepository.GetAllWithDataAsync();
+    public async Task<IEnumerable<Album>> GetAllAlbumsAsync() =>
+        await _albumRepository.GetAllAlbumsAsync();
 
-    public async Task<Album?> GetByIdWithDataAsync(Guid id) =>
-        await _albumRepository.GetByIdWithDataAsync(id);
+    public async Task<Album?> GetAlbumByIdAsync(Guid id) =>
+        await _albumRepository.GetAlbumByIdAsync(id);
 
     public async Task AddManyAlbumsAsync(IEnumerable<AlbumDto> albumDtos)
     {
         var artistNames = albumDtos.Select(dto => dto.ArtistName).Distinct().ToList();
-        var artists = await _artistRepository.GetByNamesAsync(artistNames);
-
-        var artistDict = artists.ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase);
+        var artistDict = await _artistRepository.GetDictByNamesAsync(artistNames);
 
         var albums = albumDtos.Select(dto =>
         {
@@ -59,7 +57,7 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
 
     public async Task UpdateAlbumAsync(Album editAlbum)
     {
-        Album album = await _albumRepository.GetByIdWithDataAsync(editAlbum.Id)
+        Album album = await _albumRepository.GetAlbumByIdAsync(editAlbum.Id)
             ?? throw new Exception("NotFound");
 
         Artist? artist = await _artistRepository.GetByNameAsync(editAlbum.Artist.Name)
@@ -76,7 +74,8 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         await Task.CompletedTask;
     }
 
-    public async Task<PagedResult<AlbumDto>> GetPaginatedAlbumsAsync(int pageNumber, int pageSize, string searchTerm = "")
+    public async Task<PagedResult<AlbumDto>> GetPaginatedAlbumsAsync(
+        int pageNumber, int pageSize, string searchTerm = "")
     {
         var (albums, totalItems) = await _albumRepository.GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 

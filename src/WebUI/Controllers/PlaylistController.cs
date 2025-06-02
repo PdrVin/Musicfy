@@ -98,7 +98,7 @@ public class PlaylistController : Controller
     public async Task<IActionResult> AddMusics(Guid id)
     {
         var playlist = await _playlistService.GetByIdAsync(id);
-        var allMusics = await _musicService.GetAllWithDataAsync();
+        var allMusics = await _musicService.GetAllMusicsAsync();
 
         var model = new MusicsToPlaylistViewModel
         {

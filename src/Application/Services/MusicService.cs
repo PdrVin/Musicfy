@@ -29,22 +29,19 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<Music>> GetAllWithDataAsync() =>
-        await _musicRepository.GetAllWithDataAsync();
+    public async Task<IEnumerable<Music>> GetAllMusicsAsync() =>
+        await _musicRepository.GetAllMusicsAsync();
 
-    public async Task<Music?> GetByIdWithDataAsync(Guid id) =>
-        await _musicRepository.GetByIdWithDataAsync(id);
+    public async Task<Music?> GetMusicByIdAsync(Guid id) =>
+        await _musicRepository.GetMusicByIdAsync(id);
 
     public async Task AddManyMusicsAsync(IEnumerable<MusicDto> musicDtos)
     {
-        var artistNames = musicDtos.Select(dto => dto.ArtistName).Distinct().ToList();
-        var albumTitles = musicDtos.Select(dto => dto.AlbumTitle).Distinct().ToList();
+        var artistNames = musicDtos.Select(dto => dto.ArtistName).Distinct();
+        var albumTitles = musicDtos.Select(dto => dto.AlbumTitle).Distinct();
 
-        var artists = await _artistRepository.GetByNamesAsync(artistNames);
-        var albums = await _albumRepository.GetByTitlesAsync(albumTitles);
-
-        var artistDict = artists.ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase);
-        var albumDict = albums.ToDictionary(a => a.Title, StringComparer.OrdinalIgnoreCase);
+        var artistDict = await _artistRepository.GetDictByNamesAsync(artistNames);
+        var albumDict = await _albumRepository.GetDictByTitlesAsync(albumTitles);
 
         var musics = musicDtos.Select(dto =>
         {
@@ -70,7 +67,7 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
 
     public async Task UpdateMusicAsync(Music editMusic)
     {
-        Music? music = await _musicRepository.GetByIdWithDataAsync(editMusic.Id)
+        Music? music = await _musicRepository.GetMusicByIdAsync(editMusic.Id)
             ?? throw new InvalidOperationException("Music NotFound.");
 
         Album? album = await _albumRepository.GetByTitleAsync(editMusic.Album.Title)
@@ -91,9 +88,11 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
         await Task.CompletedTask;
     }
 
-    public async Task<PagedResult<MusicDto>> GetPaginatedMusicsAsync(int pageNumber, int pageSize, string searchTerm = "")
+    public async Task<PagedResult<MusicDto>> GetPaginatedMusicsAsync(
+        int pageNumber, int pageSize, string searchTerm = "")
     {
-        var (musics, totalItems) = await _musicRepository.GetPaginatedAsync(pageNumber, pageSize, searchTerm);
+        var (musics, totalItems) = await _musicRepository
+            .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
         var musicsDTOs = musics.Select(a => new MusicDto
         {

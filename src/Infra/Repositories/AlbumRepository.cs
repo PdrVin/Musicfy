@@ -11,7 +11,7 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
     public AlbumRepository(AppDbContext context) : base(context)
     { }
 
-    public async Task<IEnumerable<Album>> GetAllWithDataAsync()
+    public async Task<IEnumerable<Album>> GetAllAlbumsAsync()
     {
         return await Entities
             .Include(a => a.Artist)
@@ -22,7 +22,7 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
             .ToListAsync();
     }
 
-    public async Task<Album?> GetByIdWithDataAsync(Guid id)
+    public async Task<Album?> GetAlbumByIdAsync(Guid id)
     {
         return await Entities
             .Include(a => a.Artist)
@@ -37,12 +37,13 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
             .FirstOrDefaultAsync(a => a.Title == title);
     }
 
-    public async Task<List<Album>> GetByTitlesAsync(IEnumerable<string> titles)
+    public async Task<Dictionary<string, Album>> GetDictByTitlesAsync(IEnumerable<string> titles)
     {
         return await Entities
             .Where(a => titles.Contains(a.Title))
             .Distinct()
-            .ToListAsync();
+            .AsNoTracking()
+            .ToDictionaryAsync(a => a.Title, StringComparer.OrdinalIgnoreCase);
     }
 
     public async Task<(IEnumerable<Album> Items, int TotalCount)> GetPaginatedAsync(

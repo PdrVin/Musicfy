@@ -64,7 +64,7 @@ public class AlbumController : Controller
     }
 
     public IActionResult Edit(Guid id) =>
-        View(_albumService.GetByIdWithDataAsync(id).Result);
+        View(_albumService.GetAlbumByIdAsync(id).Result);
 
     [HttpPost]
     public IActionResult Edit(Album album)

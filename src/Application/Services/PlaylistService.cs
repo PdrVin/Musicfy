@@ -26,8 +26,8 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<Playlist>> GetAllWithDataAsync() =>
-        await _playlistRepository.GetAllWithDataAsync();
+    public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync() =>
+        await _playlistRepository.GetAllPlaylistsAsync();
 
     public async Task AddPlaylistAsync(PlaylistDto playlistDto)
     {
@@ -56,8 +56,8 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
 
     public async Task AddMusicToPlaylistAsync(Guid musicId, Guid playlistId)
     {
-        var playlist = await _playlistRepository.GetByIdWithDataAsync(playlistId);
-        var music = await _musicRepository.GetByIdWithDataAsync(musicId);
+        var playlist = await _playlistRepository.GetPlaylistByIdAsync(playlistId);
+        var music = await _musicRepository.GetMusicByIdAsync(musicId);
 
         if (playlist == null || music == null) return;
 
@@ -71,7 +71,7 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
 
     public async Task AddMusicsToPlaylistAsync(Guid playlistId, List<Guid> musicIds)
     {
-        Playlist playlist = await _playlistRepository.GetByIdWithDataAsync(playlistId)
+        Playlist playlist = await _playlistRepository.GetPlaylistByIdAsync(playlistId)
             ?? throw new Exception("Playlist não encontrada.");
 
         List<Music> musics = await _musicRepository.GetManyByIdsAsync(musicIds);
@@ -85,9 +85,11 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task<PagedResult<PlaylistDto>> GetPaginatedPlaylistsAsync(int pageNumber, int pageSize, string searchTerm = "")
+    public async Task<PagedResult<PlaylistDto>> GetPaginatedPlaylistsAsync(
+        int pageNumber, int pageSize, string searchTerm = "")
     {
-        var (playlists, totalItems) = await _playlistRepository.GetPaginatedAsync(pageNumber, pageSize, searchTerm);
+        var (playlists, totalItems) = await _playlistRepository
+            .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
         var playlistsDTOs = playlists.Select(a => new PlaylistDto
         {

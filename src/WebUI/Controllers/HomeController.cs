@@ -28,11 +28,13 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        IEnumerable<Artist> artists = await _artistService.GetAllWithDataAsync();
-        IEnumerable<Album> albums = await _albumService.GetAllWithDataAsync();
-        IEnumerable<Music> musics = await _musicService.GetAllWithDataAsync();
-        IEnumerable<Playlist> playlists = await _playlistService.GetAllWithDataAsync();
+        IEnumerable<Artist> artists = await _artistService.GetAllArtistsAsync();
+        IEnumerable<Album> albums = await _albumService.GetAllAlbumsAsync();
+        IEnumerable<Music> musics = await _musicService.GetAllMusicsAsync();
+        IEnumerable<Playlist> playlists = await _playlistService.GetAllPlaylistsAsync();
+
         IEnumerable<Artist> topArtistsByMusic = await _artistService.GetTopArtistsByMusicAsync(10);
+        IEnumerable<Artist> topArtistsByAlbum = await _artistService.GetTopArtistsByAlbumAsync(10);
 
         DashboardViewModel model = new()
         {
@@ -43,24 +45,39 @@ public class HomeController : Controller
             TopArtistsByMusicCount = topArtistsByMusic.ToList()
         };
 
-        // var topArtistsByMusic2 = _artistService.GetTopArtistsByMusicAsync(20).Result;
-
-        var topArtistMusicCounts = topArtistsByMusic
+        // Donut Chart - Musics by Artist
+        var musicsByArtist = topArtistsByMusic
             .ToDictionary(
                 a => a.Name,
                 a => a.Musics.Count
             );
 
-        var otherArtists = artists
-            .Where(a => !topArtistsByMusic.Any(t => t.Id == a.Id));
+        var otherMusicCount = artists
+            .Where(a => !topArtistsByMusic.Any(t => t.Id == a.Id))
+            .Sum(a => a.Musics.Count > 0 ? a.Musics.Count : 0);
 
-        var otherCount = otherArtists.Sum(a => a.Musics.Count > 0 ? a.Musics.Count : 0);
+        if (otherMusicCount > 0)
+            musicsByArtist.Add("Outros", otherMusicCount);
 
-        if (otherCount > 0)
-            topArtistMusicCounts.Add("Outros", otherCount);
+        ViewBag.MusicLabels = musicsByArtist.Keys;
+        ViewBag.MusicValues = musicsByArtist.Values;
 
-        ViewBag.Labels = topArtistMusicCounts.Keys;
-        ViewBag.Values = topArtistMusicCounts.Values;
+        // Bar Chart - Albums by Artist
+        var albumByArtist = topArtistsByAlbum
+            .ToDictionary(
+                a => a.Name,
+                a => a.Albums?.Count ?? 0
+            );
+
+        var otherAlbumCount = artists
+            .Where(a => !topArtistsByAlbum.Any(t => t.Id == a.Id))
+            .Sum(a => a.Musics.Count > 0 ? a.Musics.Count : 0);
+
+        if (otherAlbumCount > 0)
+            albumByArtist.Add("Outros", otherAlbumCount);
+
+        ViewBag.AlbumLabels = albumByArtist.Keys;
+        ViewBag.AlbumValues = albumByArtist.Values;
 
         return View(model);
     }

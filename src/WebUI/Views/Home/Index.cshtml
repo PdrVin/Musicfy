@@ -52,8 +52,12 @@
                     </card>
 
                     <graph class="row g-2">
-                        <div class="card col-8 bg-dark border-0 text-white mx-auto">
-                            <canvas id="myDoughnutChart"></canvas>
+                        <div class="card col-6 bg-dark border-0 text-white mx-auto p-2">
+                            <canvas id="musicsByArtistChart"></canvas>
+                        </div>
+
+                        <div class="card col-6 bg-dark border-0 text-white mx-auto p-2">
+                            <canvas id="albumsByArtistChart"></canvas>
                         </div>
                     </graph>
 
@@ -88,53 +92,102 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    const ctx = document.getElementById('myDoughnutChart').getContext('2d');
-    const myDoughnutChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: @Html.Raw(Json.Serialize(ViewBag.Labels)),
-            datasets: [{
-                label: 'Músicas',
-                data: @Html.Raw(Json.Serialize(ViewBag.Values)),
-                backgroundColor: [
-                    '#0d6efd', @* blue *@
-                    '#6610f2', @* indigo *@
-                    '#6f42c1', @* purple *@
-                    '#d63384', @* pink *@
-                    '#dc3545', @* red *@
-                    '#fd7e14', @* orange *@
-                    '#ffc107', @* yellow *@
-                    '#198754', @* green *@
-                    '#20c997', @* teal *@
-                    '#0dcaf0', @* cyan *@
-                    '#adb5bd', @* gray *@
-                ],
-                borderColor: '#121212',
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Músicas por Artista',
-                    fullSize: true,
-                    font: { size: 28, family: "Segoe UI", weight: 'normal' },
-                    color: "#fff"
-                },
-                legend: {
-                    position: "left",
-                    labels: {
-                        boxWidth: 15,
-                        font: { weight: 'lighter' },
-                        color: 'white'
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const musicsCtx = document.getElementById('musicsByArtistChart').getContext('2d');
+        const myDoughnutChart = new Chart(musicsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Serialize(ViewBag.MusicLabels)),
+                datasets: [{
+                    label: 'Músicas',
+                    data: @Html.Raw(Json.Serialize(ViewBag.MusicValues)),
+                    backgroundColor: [
+                        '#0d6efd', @* blue *@
+                        '#6610f2', @* indigo *@
+                        '#6f42c1', @* purple *@
+                        '#d63384', @* pink *@
+                        '#dc3545', @* red *@
+                        '#fd7e14', @* orange *@
+                        '#ffc107', @* yellow *@
+                        '#198754', @* green *@
+                        '#20c997', @* teal *@
+                        '#0dcaf0', @* cyan *@
+                        '#adb5bd', @* gray *@
+                    ],
+                    borderColor: '#121212',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Músicas por Artista',
+                        fullSize: true,
+                        font: { size: 28, family: "Segoe UI", weight: 'normal' },
+                        color: "#fff"
+                    },
+                    legend: {
+                        position: "left",
+                        labels: {
+                            boxWidth: 15,
+                            font: { weight: 'lighter' },
+                            color: 'white'
+                        }
                     }
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
+    <script>
+        const albumsCtx = document.getElementById('albumsByArtistChart').getContext('2d');
+        const albumsChart = new Chart(albumsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Serialize(ViewBag.AlbumLabels)),
+                datasets: [{
+                    label: 'Álbuns',
+                    data: @Html.Raw(Json.Serialize(ViewBag.AlbumValues)),
+                    backgroundColor: [
+                        '#0d6efd', @* blue *@
+                        '#6610f2', @* indigo *@
+                        '#6f42c1', @* purple *@
+                        '#d63384', @* pink *@
+                        '#dc3545', @* red *@
+                        '#fd7e14', @* orange *@
+                        '#ffc107', @* yellow *@
+                        '#198754', @* green *@
+                        '#20c997', @* teal *@
+                        '#0dcaf0', @* cyan *@
+                        '#adb5bd', @* gray *@
+                    ],
+                    borderColor: '#121212',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Álbuns por Artista',
+                        fullSize: true,
+                        font: { size: 28, family: "Segoe UI", weight: 'normal' },
+                        color: "#fff"
+                    },
+                    legend: {
+                        position: "left",
+                        labels: {
+                            boxWidth: 15,
+                            font: { weight: 'lighter' },
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

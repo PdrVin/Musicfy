@@ -8,14 +8,12 @@ namespace Infra.Repositories;
 
 public class MusicRepository : Repository<Music>, IMusicRepository
 {
-    private readonly AppDbContext _context;
+    public MusicRepository(AppDbContext context) : base(context)
+    { }
 
-    public MusicRepository(AppDbContext context) : base(context) =>
-        _context = context;
-
-    public async Task<IEnumerable<Music>> GetAllWithDataAsync()
+    public async Task<IEnumerable<Music>> GetAllMusicsAsync()
     {
-        return await _context.Musics
+        return await Entities
             .Include(m => m.Album)
             .Include(m => m.Artist)
             .OrderBy(m => m.Artist.Name)
@@ -25,17 +23,18 @@ public class MusicRepository : Repository<Music>, IMusicRepository
             .ToListAsync();
     }
 
-    public async Task<Music?> GetByIdWithDataAsync(Guid id)
+    public async Task<Music?> GetMusicByIdAsync(Guid id)
     {
-        return await _context.Musics
+        return await Entities
             .Include(m => m.Album)
             .Include(m => m.Artist)
+            .AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
     public async Task<List<Music>> GetManyByIdsAsync(List<Guid> ids)
     {
-        return await _context.Musics
+        return await Entities
             .Where(m => ids.Contains(m.Id))
             .ToListAsync();
     }

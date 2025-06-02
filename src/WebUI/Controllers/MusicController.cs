@@ -30,8 +30,8 @@ public class MusicController : Controller
 
         ViewBag.Playlists = playlists.Select(p => new SelectListItem
         {
-            Text = p.Name,
-            Value = p.Id.ToString()
+            Text = p.Name!,
+            Value = p.Id!.ToString()
         }).ToList();
 
         return View(new MusicListViewModel
@@ -81,7 +81,7 @@ public class MusicController : Controller
     }
 
     public IActionResult Edit(Guid id) =>
-        View(_musicService.GetByIdWithDataAsync(id).Result);
+        View(_musicService.GetMusicByIdAsync(id).Result);
 
     [HttpPost]
     public IActionResult Edit(Music music)
