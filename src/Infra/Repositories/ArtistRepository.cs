@@ -27,7 +27,7 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
             .Include(a => a.Albums)
             .Include(a => a.Musics)
             .AsNoTracking()
-            .FirstOrDefaultAsync(a => a.Name == name);
+            .FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower());
     }
 
     public async Task<Dictionary<string, Artist>> GetDictByNamesAsync(IEnumerable<string> names)

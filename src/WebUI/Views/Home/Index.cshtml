@@ -16,39 +16,43 @@
                 <div class="row g-2">
 
                     <card class="col-md-3 mb-2">
-                        <div class="card bg-body border-5 border-primary shadow-sm">
+                        <a class="card bg-body border-5 border-primary shadow-sm text-white text-decoration-none"
+                            href="/Artist/Index">
                             <div class="card-body">
                                 <h5 class="card-title">Artistas</h5>
                                 <p class="card-text display-6">@Model.TotalArtists</p>
                             </div>
-                        </div>
+                        </a>
                     </card>
 
                     <card class="col-md-3 mb-2">
-                        <div class="card bg-body border-5 border-success shadow-sm">
+                        <a class="card bg-body border-5 border-success shadow-sm text-white text-decoration-none"
+                            href="/Album/Index">
                             <div class="card-body">
                                 <h5 class="card-title">Álbuns</h5>
                                 <p class="card-text display-6">@Model.TotalAlbums</p>
                             </div>
-                        </div>
+                        </a>
                     </card>
 
                     <card class="col-md-3 mb-2">
-                        <div class="card bg-body border-5 border-warning shadow-sm">
+                        <a class="card bg-body border-5 border-warning shadow-sm text-white text-decoration-none"
+                            href="/Music/Index">
                             <div class="card-body">
                                 <h5 class="card-title">Músicas</h5>
                                 <p class="card-text display-6">@Model.TotalMusics</p>
                             </div>
-                        </div>
+                        </a>
                     </card>
 
                     <card class="col-md-3 mb-2">
-                        <div class="card bg-body border-5 border-danger shadow-sm">
+                        <a class="card bg-body border-5 border-danger shadow-sm text-white text-decoration-none"
+                            href="/Playlist/Index">
                             <div class="card-body">
                                 <h5 class="card-title">Playlists</h5>
                                 <p class="card-text display-6">@Model.TotalPlaylists</p>
                             </div>
-                        </div>
+                        </a>
                     </card>
 
                     <graph class="row g-2">
@@ -137,6 +141,18 @@
                             font: { weight: 'lighter' },
                             color: 'white'
                         }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const label = context.label || '';
+                                const value = context.raw;
+                                const data = context.dataset.data;
+                                const total = data.reduce((sum, val) => sum + val, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
                     }
                 }
             }
@@ -184,6 +200,18 @@
                             boxWidth: 15,
                             font: { weight: 'lighter' },
                             color: 'white'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw;
+                                const data = context.dataset.data;
+                                const total = data.reduce((sum, val) => sum + val, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
                         }
                     }
                 }
