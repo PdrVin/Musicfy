@@ -51,7 +51,7 @@
                         <i class="bi bi-funnel"></i> Filtros
                     </button>
 
-                    <a href="/Album/Create" class="btn btn-dark btn-outline-primary px-4"
+                    <a asp-action="Create" class="btn btn-dark btn-outline-primary px-4"
                         style="height: 40px;">
                         <i class="bi bi-plus-lg"></i> Adicionar Música</a>
 
@@ -84,8 +84,16 @@
                             </td>
                             <td><div class="fw-bold">@music.Title</div></td>
                             <td class="d-none d-md-table-cell">@music.Duration.ToString(@"mm\:ss")</td>
-                            <td class="d-none d-md-table-cell">@music.AlbumTitle</td>
-                            <td class="d-none d-md-table-cell">@music.ArtistName</td>
+                            <td class="d-none d-md-table-cell">
+                                <a class="fs-6 m-0 fw-bold text-decoration-none text-white"
+                                    asp-controller="Album" asp-action="Details"
+                                    asp-route-Id="@music.AlbumId">@music.AlbumTitle</a>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                <a class="fs-6 m-0 fw-bold text-decoration-none text-white"
+                                    asp-controller="Artist" asp-action="Details"
+                                    asp-route-Id="@music.ArtistId">@music.ArtistName</a>
+                            </td>
                             <td>
                                 <div class="btn-group-sm" role="group">
                                     <div class="btn-group">
@@ -113,19 +121,17 @@
                                     </div>
 
                                     <!-- Formulário oculto -->
-                                    <form id="addToPlaylistForm" method="post" style="display:none;"
-                                        asp-controller="Music" asp-action="AddToPlaylist">
+                                    <form id="addToPlaylistForm" method="post" style="display:none;" 
+                                        asp-action="AddToPlaylist">
                                         <input type="hidden" name="musicId" id="formMusicId" />
                                         <input type="hidden" name="playlistId" id="formPlaylistId" />
                                     </form>
 
                                     <a role="button" class="btn btn-primary" aria-label="Editar"
-                                        asp-route-id="@music.Id"
-                                        asp-controller="Music" asp-action="Edit">
+                                        asp-route-id="@music.Id" asp-action="Edit">
                                         <i class="bi bi-pencil"></i></a>
                                     <a role="button" class="btn btn-danger" aria-label="Deletar"
-                                        asp-route-id="@music.Id"
-                                        asp-controller="Music" asp-action="DeleteConfirm">
+                                        asp-route-id="@music.Id" asp-action="DeleteConfirm">
                                         <i class="bi bi-trash3"></i></a>
                                 </div>
                             </td>
@@ -141,6 +147,14 @@
                         a @(Model.PageNumber * Model.PageSize) de @Model.TotalItems entradas
                     </span>
                 </div>
+
+                <div>
+                    <a class="page-link btn bg-body text-white" aria-label="Mostrar Mais"
+                        href="@Url.Action("Index", new { pageSize = Model.PageSize + 10 })">
+                        Mostrar mais
+                    </a>
+                </div>
+
                 @if (Model.TotalItems > 10)
                 {
                     <nav aria-label="Navegação de página">

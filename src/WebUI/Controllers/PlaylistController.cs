@@ -121,4 +121,38 @@ public class PlaylistController : Controller
 
         return RedirectToAction("Index");
     }
+
+    public IActionResult Details() =>
+        View();
+
+    [HttpGet]
+    public async Task<IActionResult> Details(Guid id)
+    {
+        var playlist = await _playlistService.GetPlaylistByIdAsync(id);
+
+        if (playlist == null) return NotFound();
+
+        var viewModel = new PlaylistDto
+        {
+            Id = playlist.Id,
+            Name = playlist.Name,
+
+            Musics = playlist.Musics?.Select(m => new MusicInPlaylistDto
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Duration = m.Duration,
+
+                AlbumId = m.Album.Id,
+                AlbumTitle = m.Album.Title,
+
+                ArtistId = m.Artist.Id,
+                ArtistName = m.Artist.Name
+            })
+            .OrderBy(a => a.Title)
+            .ToList() ?? new()
+        };
+
+        return View(viewModel);
+    }
 }

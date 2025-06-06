@@ -21,13 +21,23 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
             .ToListAsync();
     }
 
+    public async Task<Artist?> GetArtistByIdAsync(Guid id)
+    {
+        return await Entities
+            .Include(a => a.Albums)
+            .Include(a => a.Musics)
+                .ThenInclude(m => m.Album)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
     public async Task<Artist?> GetByNameAsync(string name)
     {
         return await Entities
             .Include(a => a.Albums)
             .Include(a => a.Musics)
             .AsNoTracking()
-            .FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower());
+            .FirstOrDefaultAsync(a => EF.Functions.Like(a.Name, name));
     }
 
     public async Task<Dictionary<string, Artist>> GetDictByNamesAsync(IEnumerable<string> names)

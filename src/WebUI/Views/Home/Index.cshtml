@@ -83,7 +83,11 @@
                         {
                             <tr class="align-middle">
                                 <td>@(i + 1)</td>
-                                <td>@topArtists[i].Name</td>
+                                <td>
+                                    <a class="fs-6 m-0 fw-bold text-decoration-none text-white"
+                                        asp-controller="Artist" asp-action="Details"
+                                        asp-route-Id="@topArtists[i].Id">@topArtists[i].Name</a>
+                                </td>
                                 <td>@topArtists[i].Musics!.Count</td>
                             </tr>
                         }

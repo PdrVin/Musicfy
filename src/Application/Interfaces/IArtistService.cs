@@ -8,6 +8,7 @@ namespace Application.Interfaces;
 public interface IArtistService : IService<ArtistDto, Artist>
 {
     Task<IEnumerable<Artist>> GetAllArtistsAsync();
+    Task<Artist?> GetArtistByIdAsync(Guid id);
     Task<Artist?> GetByNameAsync(string name);
 
     Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos);

@@ -23,6 +23,8 @@ public class PlaylistRepository : Repository<Playlist>, IPlaylistRepository
     {
         return await Entities
             .Include(p => p.Musics)
+                .ThenInclude(m => m.Album)
+                .ThenInclude(m => m.Artist)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 

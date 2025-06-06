@@ -15,7 +15,7 @@ public class AlbumController : Controller
         _albumService = albumService;
 
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 15, string searchTerm = "")
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string searchTerm = "")
     {
         var paginatedAlbums = await _albumService.GetPaginatedAlbumsAsync(pageNumber, pageSize, searchTerm);
 
@@ -92,7 +92,7 @@ public class AlbumController : Controller
         try
         {
             if (_albumService.DeleteAsync(id).IsCompleted)
-                TempData["MessageSuccess"] = "Contato deletado com sucesso.";
+                TempData["MessageSuccess"] = "Álbum deletado com sucesso.";
             else
                 TempData["MessageError"] = "Erro no processo de Exclusão.";
 
@@ -103,5 +103,37 @@ public class AlbumController : Controller
             TempData["MessageError"] = $"Erro no processo de Exclusão: {error.Message}";
             return RedirectToAction("Index");
         }
+    }
+
+    public IActionResult Details() =>
+        View();
+
+    [HttpGet]
+    public async Task<IActionResult> Details(Guid id)
+    {
+        var album = await _albumService.GetAlbumByIdAsync(id);
+
+        if (album == null) return NotFound();
+
+        var viewModel = new AlbumDto
+        {
+            Id = album.Id,
+            Title = album.Title,
+            ReleaseDate = album.ReleaseDate,
+
+            ArtistId = album.Artist.Id,
+            ArtistName = album.Artist.Name,
+
+            Musics = album.Musics?.Select(m => new MusicDto
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Duration = m.Duration,
+            })
+            .OrderBy(a => a.Title)
+            .ToList() ?? new()
+        };
+
+        return View(viewModel);
     }
 }

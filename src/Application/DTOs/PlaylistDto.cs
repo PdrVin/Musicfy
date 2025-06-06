@@ -27,7 +27,9 @@ public class MusicInPlaylistDto
 
     [Display(Name = "Álbum")]
     public string AlbumTitle { get; set; }
+    public Guid AlbumId { get; set; }
 
     [Display(Name = "Artista")]
     public string ArtistName { get; set; }
+    public Guid ArtistId { get; set; }
 }

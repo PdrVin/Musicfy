@@ -49,7 +49,7 @@
                         <i class="bi bi-funnel"></i> Filtros
                     </button>
 
-                    <a href="/Album/Create" class="btn btn-dark btn-outline-primary px-4"
+                    <a asp-action="Create" class="btn btn-dark btn-outline-primary px-4"
                         style="height: 40px;">
                         <i class="bi bi-plus-lg"></i> Adicionar Álbum</a>
 
@@ -76,13 +76,20 @@
                 <tbody>
                     @foreach (var album in Model.Albums)
                     {
-                        <tr class="align-middle" style="border-bottom: 1px solid #E0E0E0;">
+                        <tr class="align-middle table-row-click" 
+                            style="border-bottom: 1px solid #E0E0E0; cursor: pointer;"
+                            onclick="window.location.href=
+                                '@Url.Action("Details", "Album", new { id = album.Id })'">
                             <td>
                                 <input type="checkbox" class="selectActivity" name="ids" value="@album.Id">
                             </td>
                             <td><div class="fw-bold">@album.Title</div></td>
                             <td class="d-none d-md-table-cell">@album.ReleaseDate.Year</td>
-                            <td class="d-none d-md-table-cell">@album.ArtistName</td>
+                            <td class="d-none d-md-table-cell">
+                                <a class="fs-6 m-0 fw-bold text-decoration-none text-white"
+                                    asp-controller="Artist" asp-action="Details"
+                                    asp-route-Id="@album.ArtistId">@album.ArtistName</a>
+                            </td>
                             <td class="d-none d-md-table-cell">@album.Musics!.Count()</td>
                             <td>
                                 <div class="btn-group-sm" role="group">
@@ -90,10 +97,10 @@
                                         asp-route-ArtistName="@album.ArtistName" asp-route-AlbumTitle="@album.Title" asp-controller="Music" asp-action="Create">
                                         <i class="bi bi-music-note-beamed"></i></a>
                                     <a role="button" class="btn btn-primary" aria-label="Editar"
-                                        asp-route-id="@album.Id" asp-controller="Album" asp-action="Edit">
+                                        asp-route-id="@album.Id" asp-action="Edit">
                                         <i class="bi bi-pencil"></i></a>
                                     <a role="button" class="btn btn-danger" aria-label="Deletar"
-                                        asp-route-id="@album.Id" asp-controller="Album" asp-action="DeleteConfirm">
+                                        asp-route-id="@album.Id" asp-action="DeleteConfirm">
                                         <i class="bi bi-trash3"></i></a>
                                 </div>
                             </td>
@@ -108,6 +115,14 @@
                         Mostrando @((Model.PageNumber - 1) * Model.PageSize + 1) a @(Model.PageNumber * Model.PageSize) de @Model.TotalItems entradas
                     </span>
                 </div>
+
+                <div>
+                    <a class="page-link btn bg-body text-white" aria-label="Mostrar Mais"
+                        href="@Url.Action("Index", new { pageSize = Model.PageSize + 10 })">
+                        Mostrar mais
+                    </a>
+                </div>
+
                 @if (Model.TotalItems > 10)
                 {
                     <nav aria-label="Navegação de página">

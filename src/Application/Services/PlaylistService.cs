@@ -29,6 +29,9 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
     public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync() =>
         await _playlistRepository.GetAllPlaylistsAsync();
 
+    public async Task<Playlist?> GetPlaylistByIdAsync(Guid id) =>
+        await _playlistRepository.GetPlaylistByIdAsync(id);
+
     public async Task AddPlaylistAsync(PlaylistDto playlistDto)
     {
         Playlist playlist = new()

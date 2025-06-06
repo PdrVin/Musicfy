@@ -8,6 +8,7 @@ namespace Application.Interfaces;
 public interface IPlaylistService : IService<PlaylistDto, Playlist>
 {
     Task<IEnumerable<Playlist>> GetAllPlaylistsAsync();
+    Task<Playlist?> GetPlaylistByIdAsync(Guid id);
 
     Task AddPlaylistAsync(PlaylistDto playlistDto);
     Task UpdatePlaylistAsync(Playlist playlist);

@@ -14,7 +14,7 @@ public class ArtistController : Controller
         _artistService = artistService;
 
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 20, string searchTerm = "")
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string searchTerm = "")
     {
         var paginatedArtists = await _artistService.GetPaginatedArtistsAsync(pageNumber, pageSize, searchTerm);
 
@@ -89,5 +89,44 @@ public class ArtistController : Controller
             TempData["MessageError"] = $"Erro no processo de Exclusão: {error.Message}";
             return RedirectToAction("Index");
         }
+    }
+
+    public IActionResult Details() =>
+        View();
+
+    [HttpGet]
+    public async Task<IActionResult> Details(Guid id)
+    {
+        var artist = await _artistService.GetArtistByIdAsync(id);
+
+        if (artist == null) return NotFound();
+
+        var viewModel = new ArtistDto
+        {
+            Id = artist.Id,
+            Name = artist.Name,
+
+            Albums = artist.Albums?.Select(a => new AlbumDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                ReleaseDate = a.ReleaseDate
+            })
+            .OrderByDescending(a => a.ReleaseDate)
+            .ToList() ?? new(),
+
+            Musics = artist.Musics?.Select(m => new MusicDto
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Duration = m.Duration,
+                AlbumTitle = m.Album?.Title ?? "Sem Álbum"
+            })
+            .OrderBy(a => a.AlbumTitle)
+            .ThenBy(a => a.Title)
+            .ToList() ?? new()
+        };
+
+        return View(viewModel);
     }
 }

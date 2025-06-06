@@ -22,7 +22,7 @@ public class MusicController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 15, string searchTerm = "")
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 20, string searchTerm = "")
     {
         var paginatedMusics = await _musicService.GetPaginatedMusicsAsync(pageNumber, pageSize, searchTerm);
 

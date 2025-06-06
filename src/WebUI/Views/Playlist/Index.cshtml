@@ -40,8 +40,10 @@
                 <div class="d-flex align-items-center">
 
                     <div class="input-group me-2" style="width: 300px;">
-                        <input type="text" class="form-control bg-body text-white" placeholder="Pesquisar" value="@Model.SearchTerm" id="searchTerm">
-                        <span class="input-group-text btn-dark btn-outline-light"><i class="bi bi-search white"></i></span>
+                        <input type="text" class="form-control bg-body text-white"
+                            placeholder="Pesquisar" value="@Model.SearchTerm" id="searchTerm">
+                        <span class="input-group-text btn-dark btn-outline-light">
+                            <i class="bi bi-search white"></i></span>
                     </div>
 
                     <button class="btn btn-outline-light me-2 px-4"
@@ -49,7 +51,7 @@
                         <i class="bi bi-funnel"></i> Filtros
                     </button>
 
-                    <a href="/Artist/Create" class="btn btn-dark btn-outline-primary px-4"
+                    <a asp-action="Create" class="btn btn-dark btn-outline-primary px-4"
                         style="height: 40px;">
                         <i class="bi bi-plus-lg"></i> Adicionar Playlist</a>
 
@@ -74,7 +76,10 @@
                 <tbody>
                     @foreach (var playlist in Model.Playlists)
                     {
-                        <tr class="align-middle" style="border-bottom: 1px solid #E0E0E0;">
+                        <tr class="align-middle table-row-click" 
+                            style="border-bottom: 1px solid #E0E0E0; cursor: pointer;"
+                            onclick="window.location.href=
+                                '@Url.Action("Details", "Playlist", new { id = playlist.Id })'">
                             <td>
                                 <input type="checkbox" class="selectActivity" name="ids" value="@playlist.Id">
                             </td>
