@@ -83,7 +83,7 @@ public class MusicController : Controller
         View(_musicService.GetMusicByIdAsync(id).Result);
 
     [HttpPost]
-    public IActionResult Edit(Music music)
+    public IActionResult Edit(MusicDto music)
     {
         if (!ModelState.IsValid) return View(music);
 

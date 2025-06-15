@@ -40,16 +40,14 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task UpdateArtistAsync(Artist editArtist)
+    public async Task UpdateArtistAsync(ArtistDto editArtist)
     {
-        Artist artist = await _artistRepository.GetByIdAsync(editArtist.Id);
+        Artist artist = await _artistRepository.GetByIdAsync(editArtist.Id!.Value);
 
         artist.Update(editArtist.Name);
 
         _artistRepository.Update(artist);
         await _unitOfWork.CommitAsync();
-
-        await Task.CompletedTask;
     }
 
     public async Task<IEnumerable<Artist>> GetTopArtistsByMusicAsync(int top)

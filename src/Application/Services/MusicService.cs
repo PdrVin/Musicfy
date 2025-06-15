@@ -37,19 +37,15 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
 
     public async Task AddManyMusicsAsync(IEnumerable<MusicDto> musicDtos)
     {
-        var artistNames = musicDtos.Select(dto => dto.ArtistName!).Distinct();
-        var albumTitles = musicDtos.Select(dto => dto.AlbumTitle!).Distinct();
+        var normalizedDtos = NormalizeMusicDtos(musicDtos);
 
-        var artistDict = await _artistRepository.GetDictByNamesAsync(artistNames);
-        var albumDict = await _albumRepository.GetDictByTitlesAsync(albumTitles);
+        var artistDict = await EnsureArtistsExistAsync(normalizedDtos.Select(m => m.ArtistName!).Distinct());
+        var albumDict = await EnsureAlbumsExistAsync(normalizedDtos, artistDict);
 
-        var musics = musicDtos.Select(dto =>
+        var musics = normalizedDtos.Select(dto =>
         {
-            if (!artistDict.TryGetValue(dto.ArtistName!, out var artist))
-                throw new InvalidOperationException($"Artist '{dto.ArtistName}' NotFound.");
-
-            if (!albumDict.TryGetValue(dto.AlbumTitle!, out var album))
-                throw new InvalidOperationException($"Album '{dto.AlbumTitle}' NotFound.");
+            var artist = artistDict[dto.ArtistName!];
+            var album = albumDict[dto.AlbumTitle!];
 
             return new Music(
                 dto.Title,
@@ -63,15 +59,15 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task UpdateMusicAsync(Music editMusic)
+    public async Task UpdateMusicAsync(MusicDto editMusic)
     {
-        Music? music = await _musicRepository.GetMusicByIdAsync(editMusic.Id)
+        Music? music = await _musicRepository.GetMusicByIdAsync(editMusic.Id!.Value)
             ?? throw new InvalidOperationException("Music NotFound.");
 
-        Album? album = await _albumRepository.GetByTitleAsync(editMusic.Album.Title)
+        Album? album = await _albumRepository.GetByTitleAsync(editMusic.AlbumTitle!)
             ?? throw new InvalidOperationException("Album NotFound.");
 
-        Artist? artist = await _artistRepository.GetByNameAsync(editMusic.Artist.Name)
+        Artist? artist = await _artistRepository.GetByNameAsync(editMusic.ArtistName!)
             ?? throw new InvalidOperationException("Artist NotFound.");
 
         music.Update(
@@ -83,8 +79,6 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
 
         _musicRepository.Update(music);
         await _unitOfWork.CommitAsync();
-
-        await Task.CompletedTask;
     }
 
     public async Task<PagedResult<MusicDto>> GetPaginatedMusicsAsync(
@@ -111,5 +105,64 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
             PageNumber = pageNumber,
             PageSize = pageSize
         };
+    }
+
+    // Private Methods
+    private static IEnumerable<MusicDto> NormalizeMusicDtos(IEnumerable<MusicDto> musicDtos)
+    {
+        return musicDtos.Select(dto =>
+        {
+            dto.ArtistName = string.IsNullOrWhiteSpace(dto.ArtistName) ? "Desconhecido" : dto.ArtistName!;
+            dto.AlbumTitle = string.IsNullOrWhiteSpace(dto.AlbumTitle) ? "Sem Álbum" : dto.AlbumTitle!;
+            return dto;
+        });
+    }
+
+    private async Task<Dictionary<string, Artist>> EnsureArtistsExistAsync(IEnumerable<string> artistNames)
+    {
+        var artistDict = await _artistRepository.GetDictByNamesAsync(artistNames);
+
+        var newArtists = artistNames
+            .Where(name => !artistDict.ContainsKey(name))
+            .Select(name => new Artist(name));
+
+        if (newArtists.Any())
+        {
+            await _artistRepository.SaveRangeAsync(newArtists);
+            await _unitOfWork.CommitAsync();
+
+            foreach (var artist in newArtists)
+                artistDict[artist.Name] = artist;
+        }
+
+        return artistDict;
+    }
+
+    private async Task<Dictionary<string, Album>> EnsureAlbumsExistAsync(
+        IEnumerable<MusicDto> musicDtos,
+        Dictionary<string, Artist> artistDict)
+    {
+        var albumTitles = musicDtos.Select(m => m.AlbumTitle!).Distinct();
+        var albumDict = await _albumRepository.GetDictByTitlesAsync(albumTitles);
+
+        var newAlbums = albumTitles
+            .Where(title => !albumDict.ContainsKey(title))
+            .Select(title =>
+            {
+                var sample = musicDtos.First(m => m.AlbumTitle == title);
+                var artist = artistDict[sample.ArtistName!];
+                return new Album(title, DateTime.Now, artist.Id);
+            });
+
+        if (newAlbums.Any())
+        {
+            await _albumRepository.SaveRangeAsync(newAlbums);
+            await _unitOfWork.CommitAsync();
+
+            foreach (var album in newAlbums)
+                albumDict[album.Title] = album;
+        }
+
+        return albumDict;
     }
 }

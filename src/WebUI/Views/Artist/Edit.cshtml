@@ -1,6 +1,6 @@
-@using Domain.Entities
+@using Application.DTOs
 
-@model Artist
+@model ArtistDto
 @{
     ViewData["Title"] = "Editar Artista";
 }
@@ -18,5 +18,5 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Salvar</button>
-    <a class="btn btn-secondary" role="button" asp-controller="Artist" asp-action="Index">Voltar</a>
+    <a class="btn btn-secondary" asp-action="Index">Voltar</a>
 </form>

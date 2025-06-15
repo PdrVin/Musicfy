@@ -11,7 +11,7 @@ public interface IAlbumService : IService<AlbumDto, Album>
     Task<Album?> GetAlbumByIdAsync(Guid id);
 
     Task AddManyAlbumsAsync(IEnumerable<AlbumDto> albumDtos);
-    Task UpdateAlbumAsync(Album album);
+    Task UpdateAlbumAsync(AlbumDto album);
 
     Task<PagedResult<AlbumDto>> GetPaginatedAlbumsAsync(
         int pageNumber, int pageSize, string searchTerm = "");

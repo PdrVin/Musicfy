@@ -11,7 +11,7 @@ public interface IMusicService : IService<MusicDto, Music>
     Task<Music?> GetMusicByIdAsync(Guid id);
 
     Task AddManyMusicsAsync(IEnumerable<MusicDto> musicDtos);
-    Task UpdateMusicAsync(Music editMusic);
+    Task UpdateMusicAsync(MusicDto editMusic);
 
     Task<PagedResult<MusicDto>> GetPaginatedMusicsAsync(
         int pageNumber, int pageSize, string searchTerm = "");

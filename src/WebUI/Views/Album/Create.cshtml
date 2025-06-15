@@ -35,9 +35,9 @@
                 @Html.ValidationMessageFor(x => x[i].ReleaseDate)
 
                 <input type="text" asp-for="@Model![i].ArtistName" name="[@i].ArtistName"
-                    class="form-control bg-body text-white" placeholder="Digite o Artista do Álbum"
+                    class="form-control bg-body text-white"
+                    placeholder="Digite o Artista"
                     value="@(Model != null && Model.Count > i ? Model[i].ArtistName : "")" />
-                @Html.ValidationMessageFor(x => x[i].ArtistName)
             </div>
         }
     </div>

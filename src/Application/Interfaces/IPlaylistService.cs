@@ -11,7 +11,7 @@ public interface IPlaylistService : IService<PlaylistDto, Playlist>
     Task<Playlist?> GetPlaylistByIdAsync(Guid id);
 
     Task AddPlaylistAsync(PlaylistDto playlistDto);
-    Task UpdatePlaylistAsync(Playlist playlist);
+    Task UpdatePlaylistAsync(PlaylistDto playlist);
 
     Task AddMusicToPlaylistAsync(Guid playlistId, Guid musicId);
     Task AddMusicsToPlaylistAsync(Guid playlistId, List<Guid> musicIds);

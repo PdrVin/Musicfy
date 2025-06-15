@@ -1,6 +1,6 @@
-@using Domain.Entities
+@using Application.DTOs
 
-@model Album
+@model AlbumDto
 @{
     ViewData["Title"] = "Atualizar Álbum";
 }
@@ -10,27 +10,26 @@
 </div>
 
 <form asp-controller="Album" asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
     <div class="mb-3 bg-body">
-        <label for="name" class="form-label">Título do Álbum</label>
-        <input type="text" asp-for="Title" class="form-control bg-body text-white"
-            placeholder="Digite o Título do Álbum">
+        <label class="form-label">Título do Álbum</label>
+        <input type="text" asp-for="Title" class="form-control bg-body text-white" placeholder="Título do Álbum" />
         @Html.ValidationMessageFor(x => x.Title)
     </div>
 
     <div class="mb-3 bg-body">
-        <label for="releaseDate" class="form-label">Data de Lançamento</label>
-        <input type="date" asp-for="ReleaseDate" class="form-control bg-body text-white"
-            placeholder="Digite o Data de Lançamento">
+        <label class="form-label">Data de Lançamento</label>
+        <input type="date" asp-for="ReleaseDate" class="form-control bg-body text-white" />
         @Html.ValidationMessageFor(x => x.ReleaseDate)
     </div>
 
     <div class="mb-3 bg-body">
-        <label for="artistName" class="form-label">Artista do Álbum</label>
-        <input type="text" asp-for="Artist!.Name" class="form-control bg-body text-white"
-            placeholder="Digite o Artista do Álbum">
-        @Html.ValidationMessageFor(x => x.Artist!.Name)
+        <label class="form-label">Artista</label>
+        <input type="text" asp-for="ArtistName" class="form-control bg-body text-white" placeholder="Artista" />
+        @Html.ValidationMessageFor(x => x.ArtistName)
     </div>
 
     <button type="submit" class="btn btn-primary">Salvar</button>
-    <a class="btn btn-secondary" role="button" asp-controller="Album" asp-action="Index">Voltar</a>
+    <a class="btn btn-secondary" asp-action="Index">Voltar</a>
 </form>

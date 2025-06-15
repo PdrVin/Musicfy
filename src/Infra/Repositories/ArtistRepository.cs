@@ -78,6 +78,7 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
         var query = Entities
             .Include(a => a.Albums)
             .Include(a => a.Musics)
+            .Where(a => a.Name != "Desconhecido")
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(searchTerm))

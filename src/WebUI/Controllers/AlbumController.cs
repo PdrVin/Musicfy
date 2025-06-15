@@ -63,11 +63,25 @@ public class AlbumController : Controller
         }
     }
 
-    public IActionResult Edit(Guid id) =>
-        View(_albumService.GetAlbumByIdAsync(id).Result);
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        var album = await _albumService.GetAlbumByIdAsync(id);
+        if (album == null) return NotFound();
+
+        AlbumDto dto = new
+        (
+            album.Id,
+            album.Title,
+            album.ReleaseDate,
+            album.ArtistId,
+            album.Artist?.Name
+        );
+
+        return View(dto);
+    }
 
     [HttpPost]
-    public IActionResult Edit(Album album)
+    public IActionResult Edit(AlbumDto album)
     {
         if (!ModelState.IsValid) return View(album);
 

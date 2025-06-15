@@ -11,29 +11,50 @@
 }
 
 <div class="container mt-5">
-    <div class="d-flex align-items-center">
-        <div>
-            <div class="d-flex align-items-center">
-                <p class="fs-6 m-0 me-2" style="color: #ced4da">Álbum</p>
-                <i class="bi bi-disc text-success"></i>
-            </div>
+    <div class="d-flex row align-items-center">
+        <div class="d-flex align-items-center">
+            <p class="fs-6 m-0 me-2" style="color: #ced4da">Álbum</p>
+            <i class="bi bi-disc text-success"></i>
+        </div>
 
+        <div class="d-flex align-items-center justify-content-between">
             <h1 class="display-4 fw-bold me-2">@Model.Title</h1>
 
-            <div class="d-flex align-items-center flex-wrap">
-                <a class="fs-6 m-0 fw-bold text-decoration-none text-white"
-                    asp-controller="Artist" asp-action="Details"
-                    asp-route-Id="@Model.ArtistId">@Model.ArtistName</a>
+            <span class="dropstart">
+                <button class="btn btn-dark btn-outline-secondary"
+                    type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots"></i>
+                </button>
+                <ul class="bg-body dropdown-menu border-secondary">
+                    <li>
+                        <a class="dropdown-item text-white"
+                            asp-route-id="@Model.Id" asp-action="Edit">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-danger"
+                            asp-route-id="@Model.Id" asp-action="DeleteConfirm">
+                            <i class="bi bi-trash3"></i> Excluir
+                        </a>
+                    </li>
+                </ul>
+            </span>
+        </div>
 
-                <i class="bi bi-dot"></i>
-                <p class="fs-6 m-0">@Model.ReleaseDate.Year</p>
+        <div class="d-flex align-items-center flex-wrap">
+            <a class="fs-6 m-0 fw-bold text-decoration-none text-white"
+                asp-controller="Artist" asp-action="Details"
+                asp-route-Id="@Model.ArtistId">@Model.ArtistName</a>
 
-                <i class="bi bi-dot"></i>
-                <p class="fs-6 m-0">@(Model.Musics?.Count() ?? 0) músicas</p>
+            <i class="bi bi-dot"></i>
+            <p class="fs-6 m-0">@Model.ReleaseDate.Year</p>
 
-                <i class="bi bi-dot"></i>
-                <p class="fs-6 m-0">@formattedTotalDuration</p>
-            </div>
+            <i class="bi bi-dot"></i>
+            <p class="fs-6 m-0">@(Model.Musics?.Count() ?? 0) músicas</p>
+
+            <i class="bi bi-dot"></i>
+            <p class="fs-6 m-0">@formattedTotalDuration</p>
         </div>
     </div>
 

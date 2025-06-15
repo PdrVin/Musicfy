@@ -12,7 +12,7 @@ public interface IArtistService : IService<ArtistDto, Artist>
     Task<Artist?> GetByNameAsync(string name);
 
     Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos);
-    Task UpdateArtistAsync(Artist artist);
+    Task UpdateArtistAsync(ArtistDto artist);
 
     Task<IEnumerable<Artist>> GetTopArtistsByMusicAsync(int top);
     Task<IEnumerable<Artist>> GetTopArtistsByAlbumAsync(int top);

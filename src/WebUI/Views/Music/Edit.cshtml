@@ -1,6 +1,6 @@
-@using Domain.Entities
+@using Application.DTOs
 
-@model Music
+@model MusicDto
 @{
     ViewData["Title"] = "Atualizar Música";
 }
@@ -26,18 +26,18 @@
 
     <div class="mb-3">
         <label for="name" class="form-label">Título do Álbum</label>
-        <input type="text" asp-for="Album!.Title" class="form-control bg-body text-white"
+        <input type="text" asp-for="AlbumTitle" class="form-control bg-body text-white"
             placeholder="Digite o Título do Álbum">
-        @Html.ValidationMessageFor(x => x.Album!.Title)
+        @Html.ValidationMessageFor(x => x.AlbumTitle)
     </div>
 
     <div class="mb-3">
         <label for="name" class="form-label">Artista do Álbum</label>
-        <input type="text" asp-for="Artist!.Name" class="form-control bg-body text-white"
+        <input type="text" asp-for="ArtistName" class="form-control bg-body text-white"
             placeholder="Digite o Artista do Álbum">
-        @Html.ValidationMessageFor(x => x.Artist!.Name)
+        @Html.ValidationMessageFor(x => x.ArtistName)
     </div>
 
     <button type="submit" class="btn btn-primary">Salvar</button>
-    <a class="btn btn-secondary" role="button" asp-controller="Music" asp-action="Index">Voltar</a>
+    <a class="btn btn-secondary" asp-action="Index">Voltar</a>
 </form>

@@ -53,7 +53,7 @@ public class ArtistController : Controller
         View(_artistService.GetByIdAsync(id).Result);
 
     [HttpPost]
-    public IActionResult Edit(Artist artist)
+    public IActionResult Edit(ArtistDto artist)
     {
         if (!ModelState.IsValid) return View(artist);
 

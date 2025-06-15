@@ -60,7 +60,7 @@ public class PlaylistController : Controller
         View(_playlistService.GetByIdAsync(id).Result);
 
     [HttpPost]
-    public IActionResult Edit(Playlist playlist)
+    public IActionResult Edit(PlaylistDto playlist)
     {
         if (!ModelState.IsValid) return View(playlist);
 

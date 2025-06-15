@@ -34,40 +34,33 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
 
     public async Task AddManyAlbumsAsync(IEnumerable<AlbumDto> albumDtos)
     {
-        var artistNames = albumDtos.Select(dto => dto.ArtistName!).Distinct();
-        var artistDict = await _artistRepository.GetDictByNamesAsync(artistNames);
+        var normalizedDtos = NormalizeAlbumDtos(albumDtos);
 
-        var albums = albumDtos.Select(dto =>
+        var artistDict = await EnsureArtistsExistAsync(
+            normalizedDtos.Select(dto => dto.ArtistName!).Distinct());
+
+        var albums = normalizedDtos.Select(dto =>
         {
-            if (!artistDict.TryGetValue(dto.ArtistName!, out var artist))
-                throw new InvalidOperationException($"Artist '{dto.ArtistName}' NotFound.");
-
-            return new Album
-            (
-                dto.Title,
-                dto.ReleaseDate,
-                artist.Id
-            );
+            var artist = artistDict[dto.ArtistName!];
+            return new Album(dto.Title, dto.ReleaseDate, artist.Id);
         });
 
         await _albumRepository.SaveRangeAsync(albums);
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task UpdateAlbumAsync(Album editAlbum)
+    public async Task UpdateAlbumAsync(AlbumDto editAlbum)
     {
-        Album album = await _albumRepository.GetAlbumByIdAsync(editAlbum.Id)
+        var album = await _albumRepository.GetAlbumByIdAsync(editAlbum.Id!.Value)
             ?? throw new Exception("NotFound");
 
-        Artist? artist = await _artistRepository.GetByNameAsync(editAlbum.Artist.Name)
+        var artist = await _artistRepository.GetByNameAsync(editAlbum.ArtistName!)
             ?? throw new Exception("NotFound");
 
         album.Update(editAlbum.Title, editAlbum.ReleaseDate, artist.Id);
 
         _albumRepository.Update(album);
         await _unitOfWork.CommitAsync();
-
-        await Task.CompletedTask;
     }
 
     public async Task<PagedResult<AlbumDto>> GetPaginatedAlbumsAsync(
@@ -97,5 +90,36 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
             PageNumber = pageNumber,
             PageSize = pageSize
         };
+    }
+
+    // Private Methods
+    private IEnumerable<AlbumDto> NormalizeAlbumDtos(IEnumerable<AlbumDto> albumDtos)
+    {
+        return albumDtos.Select(dto =>
+        {
+            dto.ArtistName = string.IsNullOrWhiteSpace(dto.ArtistName) ? "Desconhecido" : dto.ArtistName!;
+            return dto;
+        });
+    }
+
+    private async Task<Dictionary<string, Artist>> EnsureArtistsExistAsync(IEnumerable<string> artistNames)
+    {
+        var artistDict = await _artistRepository.GetDictByNamesAsync(artistNames);
+
+        var newArtists = artistNames
+            .Where(name => !artistDict.ContainsKey(name))
+            .Distinct(StringComparer.CurrentCultureIgnoreCase)
+            .Select(name => new Artist(name));
+
+        if (newArtists.Any())
+        {
+            await _artistRepository.SaveRangeAsync(newArtists);
+            await _unitOfWork.CommitAsync();
+
+            foreach (var artist in newArtists)
+                artistDict[artist.Name] = artist;
+        }
+
+        return artistDict;
     }
 }
