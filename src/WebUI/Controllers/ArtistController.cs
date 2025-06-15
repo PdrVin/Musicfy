@@ -102,30 +102,31 @@ public class ArtistController : Controller
         if (artist == null) return NotFound();
 
         var viewModel = new ArtistDto
-        {
-            Id = artist.Id,
-            Name = artist.Name,
+        (
+            artist.Id,
+            artist.Name,
 
-            Albums = artist.Albums?.Select(a => new AlbumDto
-            {
-                Id = a.Id,
-                Title = a.Title,
-                ReleaseDate = a.ReleaseDate
-            })
-            .OrderByDescending(a => a.ReleaseDate)
-            .ToList() ?? new(),
+            artist.Albums!.Select(album => new AlbumDto
+            (
+                album.Id,
+                album.Title,
+                album.ReleaseDate,
+                album.Artist.Id,
+                album.Artist.Name
+            ))
+            .OrderByDescending(a => a.ReleaseDate),
 
-            Musics = artist.Musics?.Select(m => new MusicDto
-            {
-                Id = m.Id,
-                Title = m.Title,
-                Duration = m.Duration,
-                AlbumTitle = m.Album?.Title ?? "Sem Álbum"
-            })
+            artist.Musics!.Select(music => new MusicDto
+            (
+                music.Id,
+                music.Title,
+                music.Duration,
+                music.Album.Id,
+                music.Album?.Title ?? "Sem Álbum"
+            ))
             .OrderBy(a => a.AlbumTitle)
             .ThenBy(a => a.Title)
-            .ToList() ?? new()
-        };
+        );
 
         return View(viewModel);
     }

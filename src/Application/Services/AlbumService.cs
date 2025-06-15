@@ -34,22 +34,21 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
 
     public async Task AddManyAlbumsAsync(IEnumerable<AlbumDto> albumDtos)
     {
-        var artistNames = albumDtos.Select(dto => dto.ArtistName).Distinct().ToList();
+        var artistNames = albumDtos.Select(dto => dto.ArtistName!).Distinct();
         var artistDict = await _artistRepository.GetDictByNamesAsync(artistNames);
 
         var albums = albumDtos.Select(dto =>
         {
-            if (!artistDict.TryGetValue(dto.ArtistName, out var artist))
+            if (!artistDict.TryGetValue(dto.ArtistName!, out var artist))
                 throw new InvalidOperationException($"Artist '{dto.ArtistName}' NotFound.");
 
             return new Album
-            {
-                Title = dto.Title,
-                ReleaseDate = dto.ReleaseDate,
-                ArtistId = artist.Id,
-                CreatedAt = DateTime.Now
-            };
-        }).ToList();
+            (
+                dto.Title,
+                dto.ReleaseDate,
+                artist.Id
+            );
+        });
 
         await _albumRepository.SaveRangeAsync(albums);
         await _unitOfWork.CommitAsync();
@@ -63,10 +62,7 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         Artist? artist = await _artistRepository.GetByNameAsync(editAlbum.Artist.Name)
             ?? throw new Exception("NotFound");
 
-        album.Title = editAlbum.Title;
-        album.ReleaseDate = editAlbum.ReleaseDate;
-        album.ArtistId = artist.Id;
-        album.UpdatedAt = DateTime.Now;
+        album.Update(editAlbum.Title, editAlbum.ReleaseDate, artist.Id);
 
         _albumRepository.Update(album);
         await _unitOfWork.CommitAsync();
@@ -79,20 +75,20 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
     {
         var (albums, totalItems) = await _albumRepository.GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
-        var albumsDTOs = albums.Select(a => new AlbumDto
-        {
-            Id = a.Id,
-            Title = a.Title,
-            ReleaseDate = a.ReleaseDate,
-            ArtistId = a.ArtistId ?? Guid.Empty,
-            ArtistName = a.Artist.Name,
+        var albumsDTOs = albums.Select(album => new AlbumDto
+        (
+            album.Id,
+            album.Title,
+            album.ReleaseDate,
+            album.ArtistId ?? Guid.Empty,
+            album.Artist.Name,
 
-            Musics = a.Musics?.Select(music => new MusicDto
+            album.Musics?.Select(music => new MusicDto
             {
                 Id = music.Id,
                 Title = music.Title
-            }).ToList()
-        }).ToList();
+            })
+        ));
 
         return new PagedResult<AlbumDto>
         {

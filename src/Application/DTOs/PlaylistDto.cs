@@ -12,7 +12,21 @@ public class PlaylistDto
     public string Name { get; set; }
 
     [Display(Name = "Músicas")]
-    public List<MusicInPlaylistDto>? Musics { get; set; }
+    public IEnumerable<MusicInPlaylistDto>? Musics { get; set; }
+
+    public PlaylistDto() { }
+
+    public PlaylistDto
+    (
+        Guid? id,
+        string name,
+        IEnumerable<MusicInPlaylistDto>? musics
+    )
+    {
+        Id = id;
+        Name = name;
+        Musics = musics ?? new List<MusicInPlaylistDto>();
+    }
 }
 
 public class MusicInPlaylistDto
@@ -25,11 +39,33 @@ public class MusicInPlaylistDto
     [Display(Name = "Duração")]
     public TimeSpan Duration { get; set; }
 
+    public Guid AlbumId { get; set; }
     [Display(Name = "Álbum")]
     public string AlbumTitle { get; set; }
-    public Guid AlbumId { get; set; }
 
+    public Guid ArtistId { get; set; }
     [Display(Name = "Artista")]
     public string ArtistName { get; set; }
-    public Guid ArtistId { get; set; }
+
+    public MusicInPlaylistDto() { }
+
+    public MusicInPlaylistDto
+    (
+        Guid? id,
+        string title,
+        TimeSpan duration,
+        Guid albumId,
+        string albumTitle,
+        Guid artistId,
+        string artistName
+    )
+    {
+        Id = id;
+        Title = title;
+        Duration = duration;
+        AlbumId = albumId;
+        AlbumTitle = albumTitle;
+        ArtistId = artistId;
+        ArtistName = artistName;
+    }
 }

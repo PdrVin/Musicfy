@@ -34,12 +34,7 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
 
     public async Task AddManyArtistsAsync(IEnumerable<ArtistDto> artistDtos)
     {
-        var artists = artistDtos.Select(dto =>
-            new Artist
-            {
-                Name = dto.Name,
-                CreatedAt = DateTime.Now,
-            }).ToList();
+        var artists = artistDtos.Select(dto => new Artist(dto.Name));
 
         await _artistRepository.SaveRangeAsync(artists);
         await _unitOfWork.CommitAsync();
@@ -49,8 +44,7 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
     {
         Artist artist = await _artistRepository.GetByIdAsync(editArtist.Id);
 
-        artist.Name = editArtist.Name;
-        artist.UpdatedAt = DateTime.Now;
+        artist.Update(editArtist.Name);
 
         _artistRepository.Update(artist);
         await _unitOfWork.CommitAsync();
@@ -74,23 +68,23 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         var (artists, totalItems) = await _artistRepository
             .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
-        var artistDtos = artists.Select(a => new ArtistDto
-        {
-            Id = a.Id,
-            Name = a.Name,
+        var artistDtos = artists.Select(artist => new ArtistDto
+        (
+            artist.Id,
+            artist.Name,
 
-            Albums = a.Albums?.Select(album => new AlbumDto
+            artist.Albums?.Select(album => new AlbumDto
             {
                 Id = album.Id,
                 Title = album.Title
-            }).ToList(),
+            }),
 
-            Musics = a.Musics?.Select(music => new MusicDto
+            artist.Musics?.Select(music => new MusicDto
             {
                 Id = music.Id,
                 Title = music.Title
-            }).ToList()
-        }).ToList();
+            })
+        ));
 
         return new PagedResult<ArtistDto>
         {

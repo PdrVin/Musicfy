@@ -58,7 +58,6 @@ public class MusicController : Controller
         return View(musics);
     }
 
-
     [HttpPost]
     public IActionResult Create(IEnumerable<MusicDto> musics)
     {

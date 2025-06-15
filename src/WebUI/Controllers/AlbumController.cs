@@ -116,23 +116,22 @@ public class AlbumController : Controller
         if (album == null) return NotFound();
 
         var viewModel = new AlbumDto
-        {
-            Id = album.Id,
-            Title = album.Title,
-            ReleaseDate = album.ReleaseDate,
+        (
+            album.Id,
+            album.Title,
+            album.ReleaseDate,
 
-            ArtistId = album.Artist.Id,
-            ArtistName = album.Artist.Name,
+            album.Artist.Id,
+            album.Artist.Name,
 
-            Musics = album.Musics?.Select(m => new MusicDto
-            {
-                Id = m.Id,
-                Title = m.Title,
-                Duration = m.Duration,
-            })
-            .OrderBy(a => a.Title)
-            .ToList() ?? new()
-        };
+            album.Musics?.Select(music => new MusicDto
+            (
+                music.Id,
+                music.Title,
+                music.Duration
+            ))
+            .OrderBy(m => m.Title)
+        );
 
         return View(viewModel);
     }

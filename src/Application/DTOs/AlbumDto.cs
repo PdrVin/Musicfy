@@ -15,12 +15,31 @@ public class AlbumDto
     [Display(Name = "Data de Lançamento")]
     public DateTime ReleaseDate { get; set; }
 
-    [Required(ErrorMessage = "O artista do álbum é obrigatório.")]
-    public Guid ArtistId { get; set; }
+    public Guid? ArtistId { get; set; }
 
     [StringLength(50, ErrorMessage = "O nome do artista deve ter no máximo 50 caracteres.")]
     [Display(Name = "Nome do Artista")]
-    public string ArtistName { get; set; }
+    public string? ArtistName { get; set; }
 
     public IEnumerable<MusicDto>? Musics { get; set; }
+
+    public AlbumDto() { }
+
+    public AlbumDto
+    (
+        Guid? id,
+        string title,
+        DateTime releaseDate,
+        Guid? artistId,
+        string? artistName,
+        IEnumerable<MusicDto>? musicDtos = null
+    )
+    {
+        Id = id;
+        Title = title;
+        ReleaseDate = releaseDate;
+        ArtistId = artistId ?? null;
+        ArtistName = artistName ?? null;
+        Musics = musicDtos ?? new List<MusicDto>();
+    }
 }

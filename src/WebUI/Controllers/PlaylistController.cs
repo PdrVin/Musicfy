@@ -133,25 +133,24 @@ public class PlaylistController : Controller
         if (playlist == null) return NotFound();
 
         var viewModel = new PlaylistDto
-        {
-            Id = playlist.Id,
-            Name = playlist.Name,
+        (
+            playlist.Id,
+            playlist.Name,
 
-            Musics = playlist.Musics?.Select(m => new MusicInPlaylistDto
-            {
-                Id = m.Id,
-                Title = m.Title,
-                Duration = m.Duration,
+            playlist.Musics?.Select(music => new MusicInPlaylistDto
+            (
+                music.Id,
+                music.Title,
+                music.Duration,
 
-                AlbumId = m.Album.Id,
-                AlbumTitle = m.Album.Title,
+                music.Album.Id,
+                music.Album.Title,
 
-                ArtistId = m.Artist.Id,
-                ArtistName = m.Artist.Name
-            })
+                music.Artist.Id,
+                music.Artist.Name
+            ))
             .OrderBy(a => a.Title)
-            .ToList() ?? new()
-        };
+        );
 
         return View(viewModel);
     }

@@ -15,17 +15,37 @@ public class MusicDto
     [Display(Name = "Duração")]
     public TimeSpan Duration { get; set; }
 
-    [Required(ErrorMessage = "O álbum da música é obrigatório.")]
-    public Guid AlbumId { get; set; }
+    public Guid? AlbumId { get; set; }
 
     [StringLength(50, ErrorMessage = "O nome do álbum deve ter no máximo 50 caracteres.")]
     [Display(Name = "Álbum")]
-    public string AlbumTitle { get; set; }
+    public string? AlbumTitle { get; set; }
 
-    [Required(ErrorMessage = "O artista da música é obrigatório.")]
-    public Guid ArtistId { get; set; }
+    public Guid? ArtistId { get; set; }
 
     [StringLength(50, ErrorMessage = "O nome do artista deve ter no máximo 50 caracteres.")]
     [Display(Name = "Artista")]
-    public string ArtistName { get; set; }
+    public string? ArtistName { get; set; }
+
+    public MusicDto() { }
+
+    public MusicDto
+    (
+        Guid? id,
+        string title,
+        TimeSpan duration,
+        Guid? albumId = null,
+        string? albumTitle = null,
+        Guid? artistId = null,
+        string? artistName = null
+    )
+    {
+        Id = id;
+        Title = title;
+        Duration = duration;
+        AlbumId = albumId;
+        AlbumTitle = albumTitle;
+        ArtistId = artistId;
+        ArtistName = artistName;
+    }
 }

@@ -37,29 +37,27 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
 
     public async Task AddManyMusicsAsync(IEnumerable<MusicDto> musicDtos)
     {
-        var artistNames = musicDtos.Select(dto => dto.ArtistName).Distinct();
-        var albumTitles = musicDtos.Select(dto => dto.AlbumTitle).Distinct();
+        var artistNames = musicDtos.Select(dto => dto.ArtistName!).Distinct();
+        var albumTitles = musicDtos.Select(dto => dto.AlbumTitle!).Distinct();
 
         var artistDict = await _artistRepository.GetDictByNamesAsync(artistNames);
         var albumDict = await _albumRepository.GetDictByTitlesAsync(albumTitles);
 
         var musics = musicDtos.Select(dto =>
         {
-            if (!artistDict.TryGetValue(dto.ArtistName, out var artist))
+            if (!artistDict.TryGetValue(dto.ArtistName!, out var artist))
                 throw new InvalidOperationException($"Artist '{dto.ArtistName}' NotFound.");
 
-            if (!albumDict.TryGetValue(dto.AlbumTitle, out var album))
+            if (!albumDict.TryGetValue(dto.AlbumTitle!, out var album))
                 throw new InvalidOperationException($"Album '{dto.AlbumTitle}' NotFound.");
 
-            return new Music
-            {
-                Title = dto.Title,
-                Duration = new TimeSpan(0, dto.Duration.Hours, dto.Duration.Minutes),
-                ArtistId = artist.Id,
-                AlbumId = album.Id,
-                CreatedAt = DateTime.Now,
-            };
-        }).ToList();
+            return new Music(
+                dto.Title,
+                new TimeSpan(0, dto.Duration.Hours, dto.Duration.Minutes),
+                artist.Id,
+                album.Id
+            );
+        });
 
         await _musicRepository.SaveRangeAsync(musics);
         await _unitOfWork.CommitAsync();
@@ -76,11 +74,12 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
         Artist? artist = await _artistRepository.GetByNameAsync(editMusic.Artist.Name)
             ?? throw new InvalidOperationException("Artist NotFound.");
 
-        music.Title = editMusic.Title;
-        music.Duration = new TimeSpan(0, editMusic.Duration.Hours, editMusic.Duration.Minutes);
-        music.AlbumId = album.Id;
-        music.ArtistId = artist.Id;
-        music.UpdatedAt = DateTime.Now;
+        music.Update(
+            editMusic.Title,
+            new TimeSpan(0, editMusic.Duration.Hours, editMusic.Duration.Minutes),
+            album.Id,
+            artist.Id
+        );
 
         _musicRepository.Update(music);
         await _unitOfWork.CommitAsync();
@@ -94,16 +93,16 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
         var (musics, totalItems) = await _musicRepository
             .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
-        var musicsDTOs = musics.Select(a => new MusicDto
-        {
-            Id = a.Id,
-            Title = a.Title,
-            Duration = a.Duration,
-            AlbumId = a.AlbumId ?? Guid.Empty,
-            AlbumTitle = a.Album.Title,
-            ArtistId = a.ArtistId ?? Guid.Empty,
-            ArtistName = a.Artist.Name
-        }).ToList();
+        var musicsDTOs = musics.Select(music => new MusicDto
+        (
+            music.Id,
+            music.Title,
+            music.Duration,
+            music.AlbumId ?? Guid.Empty,
+            music.Album.Title,
+            music.ArtistId ?? Guid.Empty,
+            music.Artist.Name
+        ));
 
         return new PagedResult<MusicDto>
         {

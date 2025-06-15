@@ -1,4 +1,3 @@
-using System.Collections;
 using Domain.Entities.Base;
 
 namespace Domain.Entities;
@@ -12,5 +11,25 @@ public class Album : EntityBase
     public Guid? ArtistId { get; set; }
     public Artist? Artist { get; set; }
 
-    public ICollection<Music>? Musics { get; set; } = new List<Music>();
+    public ICollection<Music>? Musics { get; set; }
+
+    public Album() { }
+
+    public Album(string title, DateTime releaseDate, Guid? artistId)
+    {
+        Title = title;
+        ReleaseDate = releaseDate;
+        ArtistId = artistId;
+        Musics = new List<Music>();
+        CreatedAt = DateTime.Now;
+    }
+
+    public void Update(string title, DateTime releaseDate, Guid? artistId)
+    {
+        Title = title;
+        ReleaseDate = releaseDate;
+        ArtistId = artistId;
+        Artist = null;
+        UpdatedAt = DateTime.Now;
+    }
 }

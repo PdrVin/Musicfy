@@ -34,11 +34,7 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
 
     public async Task AddPlaylistAsync(PlaylistDto playlistDto)
     {
-        Playlist playlist = new()
-        {
-            Name = playlistDto.Name,
-            CreatedAt = DateTime.Now,
-        };
+        Playlist playlist = new(playlistDto.Name);
 
         await _playlistRepository.SaveAsync(playlist);
         await _unitOfWork.CommitAsync();
@@ -48,8 +44,7 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
     {
         Playlist playlist = await _playlistRepository.GetByIdAsync(editPlaylist.Id);
 
-        playlist.Name = editPlaylist.Name;
-        playlist.UpdatedAt = DateTime.Now;
+        playlist.Update(editPlaylist.Name);
 
         _playlistRepository.Update(playlist);
         await _unitOfWork.CommitAsync();
@@ -94,17 +89,17 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
         var (playlists, totalItems) = await _playlistRepository
             .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
-        var playlistsDTOs = playlists.Select(a => new PlaylistDto
-        {
-            Id = a.Id,
-            Name = a.Name,
+        var playlistsDTOs = playlists.Select(playlist => new PlaylistDto
+        (
+            playlist.Id,
+            playlist.Name,
             
-            Musics = a.Musics?.Select(music => new MusicInPlaylistDto
+            playlist.Musics?.Select(music => new MusicInPlaylistDto
             {
                 Id = music.Id,
                 Title = music.Title
-            }).ToList()
-        }).ToList();
+            })
+        ));
 
         return new PagedResult<PlaylistDto>
         {
