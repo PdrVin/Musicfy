@@ -4,6 +4,7 @@ using Application.DTOs;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebUI.ViewModels.Music;
+using AutoMapper;
 
 namespace WebUI.Controllers;
 
@@ -11,14 +12,17 @@ public class MusicController : Controller
 {
     private readonly IMusicService _musicService;
     private readonly IPlaylistService _playlistService;
+    private readonly IMapper _mapper;
 
     public MusicController(
         IMusicService musicService,
-        IPlaylistService playlistService
+        IPlaylistService playlistService,
+        IMapper mapper
     )
     {
         _musicService = musicService;
         _playlistService = playlistService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -79,8 +83,17 @@ public class MusicController : Controller
         return RedirectToAction("Index");
     }
 
-    public IActionResult Edit(Guid id) =>
-        View(_musicService.GetMusicByIdAsync(id).Result);
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        Music? music = await _musicService.GetMusicByIdAsync(id);
+        if (music == null) return NotFound();
+
+        music.Duration = new TimeSpan(music.Duration.Minutes, music.Duration.Seconds, 0);
+
+        MusicDto? musicDto = _mapper.Map<MusicDto>(music);
+
+        return View(musicDto);
+    }
 
     [HttpPost]
     public IActionResult Edit(MusicDto music)

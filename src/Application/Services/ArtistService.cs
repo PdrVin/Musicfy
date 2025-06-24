@@ -5,6 +5,7 @@ using Application.Services.Base;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Base;
+using AutoMapper;
 
 namespace Application.Services;
 
@@ -12,15 +13,18 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
 {
     private readonly IArtistRepository _artistRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public ArtistService(
         IArtistRepository repository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IMapper mapper
     )
-        : base(repository, unitOfWork)
+        : base(repository, unitOfWork, mapper)
     {
         _artistRepository = repository;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<Artist>> GetAllArtistsAsync() =>
@@ -66,23 +70,7 @@ public class ArtistService : Service<ArtistDto, Artist>, IArtistService
         var (artists, totalItems) = await _artistRepository
             .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
-        var artistDtos = artists.Select(artist => new ArtistDto
-        (
-            artist.Id,
-            artist.Name,
-
-            artist.Albums?.Select(album => new AlbumDto
-            {
-                Id = album.Id,
-                Title = album.Title
-            }),
-
-            artist.Musics?.Select(music => new MusicDto
-            {
-                Id = music.Id,
-                Title = music.Title
-            })
-        ));
+        var artistDtos = _mapper.Map<IEnumerable<ArtistDto>>(artists);
 
         return new PagedResult<ArtistDto>
         {

@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces.Base;
+using AutoMapper;
 using Domain.Entities.Base;
 using Domain.Interfaces.Base;
 
@@ -9,14 +10,17 @@ public class Service<TDto, TEntity> : IService<TDto, TEntity>
 {
     private readonly IRepository<TEntity> _repository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public Service(
         IRepository<TEntity> repository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IMapper mapper
     )
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<TEntity>> GetAllAsync()

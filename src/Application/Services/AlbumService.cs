@@ -5,6 +5,7 @@ using Application.Services.Base;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Base;
+using AutoMapper;
 
 namespace Application.Services;
 
@@ -13,17 +14,20 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
     private readonly IAlbumRepository _albumRepository;
     private readonly IArtistRepository _artistRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public AlbumService(
         IAlbumRepository repository,
         IArtistRepository artistRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IMapper mapper
     )
-        : base(repository, unitOfWork)
+        : base(repository, unitOfWork, mapper)
     {
         _albumRepository = repository;
         _artistRepository = artistRepository;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<Album>> GetAllAlbumsAsync() =>
@@ -66,22 +70,10 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
     public async Task<PagedResult<AlbumDto>> GetPaginatedAlbumsAsync(
         int pageNumber, int pageSize, string searchTerm = "")
     {
-        var (albums, totalItems) = await _albumRepository.GetPaginatedAsync(pageNumber, pageSize, searchTerm);
+        var (albums, totalItems) = await _albumRepository
+            .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
-        var albumsDTOs = albums.Select(album => new AlbumDto
-        (
-            album.Id,
-            album.Title,
-            album.ReleaseDate,
-            album.ArtistId ?? Guid.Empty,
-            album.Artist.Name,
-
-            album.Musics?.Select(music => new MusicDto
-            {
-                Id = music.Id,
-                Title = music.Title
-            })
-        ));
+        var albumsDTOs = _mapper.Map<IEnumerable<AlbumDto>>(albums);
 
         return new PagedResult<AlbumDto>
         {

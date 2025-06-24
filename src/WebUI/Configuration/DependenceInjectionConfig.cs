@@ -1,5 +1,6 @@
 using Application.Interfaces;
 using Application.Interfaces.Base;
+using Application.Mappings;
 using Application.Services;
 using Application.Services.Base;
 using Domain.Interfaces;
@@ -31,6 +32,10 @@ public static class DependencyInjectionConfig
         services.AddScoped<IArtistRepository, ArtistRepository>();
         services.AddScoped<IMusicRepository, MusicRepository>();
         services.AddScoped<IPlaylistRepository, PlaylistRepository>();
+        #endregion
+
+        #region AutoMapper
+        services.AddAutoMapper(typeof(EntityMappingProfile).Assembly);
         #endregion
     }
 }

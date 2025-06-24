@@ -3,18 +3,23 @@ using Application.Interfaces;
 using Application.DTOs;
 using Domain.Entities;
 using WebUI.ViewModels.Artist;
+using AutoMapper;
 
 namespace WebUI.Controllers;
 
 public class ArtistController : Controller
 {
     private readonly IArtistService _artistService;
+    private readonly IMapper _mapper;
 
-    public ArtistController(IArtistService artistService) =>
+    public ArtistController(IArtistService artistService, IMapper mapper)
+    {
         _artistService = artistService;
+        _mapper = mapper;
+    }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string searchTerm = "")
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 20, string searchTerm = "")
     {
         var paginatedArtists = await _artistService.GetPaginatedArtistsAsync(pageNumber, pageSize, searchTerm);
 
@@ -49,8 +54,15 @@ public class ArtistController : Controller
         }
     }
 
-    public IActionResult Edit(Guid id) =>
-        View(_artistService.GetByIdAsync(id).Result);
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        var artist = await _artistService.GetArtistByIdAsync(id);
+        if (artist == null) return NotFound();
+
+        var artistDto = _mapper.Map<ArtistDto>(artist);
+
+        return View(artistDto);
+    }
 
     [HttpPost]
     public IActionResult Edit(ArtistDto artist)
@@ -101,32 +113,7 @@ public class ArtistController : Controller
 
         if (artist == null) return NotFound();
 
-        var viewModel = new ArtistDto
-        (
-            artist.Id,
-            artist.Name,
-
-            artist.Albums!.Select(album => new AlbumDto
-            (
-                album.Id,
-                album.Title,
-                album.ReleaseDate,
-                album.Artist.Id,
-                album.Artist.Name
-            ))
-            .OrderByDescending(a => a.ReleaseDate),
-
-            artist.Musics!.Select(music => new MusicDto
-            (
-                music.Id,
-                music.Title,
-                music.Duration,
-                music.Album.Id,
-                music.Album?.Title ?? "Sem Álbum"
-            ))
-            .OrderBy(a => a.AlbumTitle)
-            .ThenBy(a => a.Title)
-        );
+        var viewModel = _mapper.Map<ArtistDto>(artist);
 
         return View(viewModel);
     }

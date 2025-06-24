@@ -5,6 +5,7 @@ using Application.Services.Base;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Base;
+using AutoMapper;
 
 namespace Application.Services;
 
@@ -13,17 +14,20 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
     private readonly IPlaylistRepository _playlistRepository;
     private readonly IMusicRepository _musicRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
     public PlaylistService(
         IPlaylistRepository repository,
         IMusicRepository musicRepository,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        IMapper mapper
     )
-        : base(repository, unitOfWork)
+        : base(repository, unitOfWork, mapper)
     {
         _playlistRepository = repository;
         _musicRepository = musicRepository;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync() =>
@@ -89,17 +93,7 @@ public class PlaylistService : Service<PlaylistDto, Playlist>, IPlaylistService
         var (playlists, totalItems) = await _playlistRepository
             .GetPaginatedAsync(pageNumber, pageSize, searchTerm);
 
-        var playlistsDTOs = playlists.Select(playlist => new PlaylistDto
-        (
-            playlist.Id,
-            playlist.Name,
-            
-            playlist.Musics?.Select(music => new MusicInPlaylistDto
-            {
-                Id = music.Id,
-                Title = music.Title
-            })
-        ));
+        var playlistsDTOs = _mapper.Map<IEnumerable<PlaylistDto>>(playlists);
 
         return new PagedResult<PlaylistDto>
         {

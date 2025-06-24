@@ -4,21 +4,25 @@ using Application.Interfaces;
 using Application.DTOs;
 using Domain.Entities;
 using WebUI.ViewModels.Playlist;
+using AutoMapper;
 
 namespace WebUI.Controllers;
 
 public class PlaylistController : Controller
 {
-    private readonly IMusicService _musicService;
     private readonly IPlaylistService _playlistService;
+    private readonly IMusicService _musicService;
+    private readonly IMapper _mapper;
 
     public PlaylistController(
         IPlaylistService playlistService,
-        IMusicService musicService
+        IMusicService musicService,
+        IMapper mapper
     )
     {
         _playlistService = playlistService;
         _musicService = musicService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -132,25 +136,7 @@ public class PlaylistController : Controller
 
         if (playlist == null) return NotFound();
 
-        var viewModel = new PlaylistDto
-        (
-            playlist.Id,
-            playlist.Name,
-
-            playlist.Musics?.Select(music => new MusicInPlaylistDto
-            (
-                music.Id,
-                music.Title,
-                music.Duration,
-
-                music.Album.Id,
-                music.Album.Title,
-
-                music.Artist.Id,
-                music.Artist.Name
-            ))
-            .OrderBy(a => a.Title)
-        );
+        var viewModel = _mapper.Map<PlaylistDto>(playlist);
 
         return View(viewModel);
     }

@@ -5,17 +5,23 @@ using Application.DTOs;
 using Domain.Entities;
 using WebUI.ViewModels.Album;
 
+using AutoMapper;
+
 namespace WebUI.Controllers;
 
 public class AlbumController : Controller
 {
     private readonly IAlbumService _albumService;
+    private readonly IMapper _mapper;
 
-    public AlbumController(IAlbumService albumService) =>
+    public AlbumController(IAlbumService albumService, IMapper mapper)
+    {
         _albumService = albumService;
+        _mapper = mapper;
+    }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string searchTerm = "")
+    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 20, string searchTerm = "")
     {
         var paginatedAlbums = await _albumService.GetPaginatedAlbumsAsync(pageNumber, pageSize, searchTerm);
 
@@ -68,16 +74,9 @@ public class AlbumController : Controller
         var album = await _albumService.GetAlbumByIdAsync(id);
         if (album == null) return NotFound();
 
-        AlbumDto dto = new
-        (
-            album.Id,
-            album.Title,
-            album.ReleaseDate,
-            album.ArtistId,
-            album.Artist?.Name
-        );
+        var albumDto = _mapper.Map<AlbumDto>(album);
 
-        return View(dto);
+        return View(albumDto);
     }
 
     [HttpPost]
@@ -129,23 +128,7 @@ public class AlbumController : Controller
 
         if (album == null) return NotFound();
 
-        var viewModel = new AlbumDto
-        (
-            album.Id,
-            album.Title,
-            album.ReleaseDate,
-
-            album.Artist.Id,
-            album.Artist.Name,
-
-            album.Musics?.Select(music => new MusicDto
-            (
-                music.Id,
-                music.Title,
-                music.Duration
-            ))
-            .OrderBy(m => m.Title)
-        );
+        var viewModel = _mapper.Map<AlbumDto>(album);
 
         return View(viewModel);
     }
