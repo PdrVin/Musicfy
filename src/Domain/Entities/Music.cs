@@ -23,19 +23,31 @@ public class Music : EntityBase
         Title = title;
         Duration = duration;
         AlbumId = albumId;
+        Album = null;
         ArtistId = artistId;
+        Artist = null;
         CreatedAt = DateTime.Now;
         Playlists = new List<Playlist>();
     }
 
     public void Update(string title, TimeSpan duration, Guid? albumId, Guid? artistId)
     {
-        Title = title;
-        Duration = duration;
-        AlbumId = albumId;
-        Album = null;
-        ArtistId = artistId;
-        Artist = null;
+        if (!Title.Equals(title)) Title = title;
+
+        if (!Duration.ToString().Equals(duration.ToString())) Duration = duration;
+
+        if (AlbumId != albumId)
+        {
+            AlbumId = albumId;
+            Album = null;
+        }
+
+        if (ArtistId != artistId)
+        {
+            ArtistId = artistId;
+            Artist = null;
+        }
+
         UpdatedAt = DateTime.Now;
     }
 }

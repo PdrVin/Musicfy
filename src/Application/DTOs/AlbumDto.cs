@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Domain.Enums;
 
 namespace Application.DTOs;
 
@@ -14,6 +15,7 @@ public class AlbumDto
     [Required(ErrorMessage = "A data de lançamento do álbum é obrigatória.")]
     [Display(Name = "Data de Lançamento")]
     public DateTime ReleaseDate { get; set; }
+    public AlbumType Type { get; set; }
 
     public Guid? ArtistId { get; set; }
 
@@ -30,6 +32,7 @@ public class AlbumDto
         Guid? id,
         string title,
         DateTime releaseDate,
+        AlbumType type,
         Guid? artistId,
         string? artistName,
         IEnumerable<MusicDto>? musicDtos = null
@@ -38,8 +41,9 @@ public class AlbumDto
         Id = id;
         Title = title;
         ReleaseDate = releaseDate;
+        Type = type;
         ArtistId = artistId ?? null;
         ArtistName = artistName ?? null;
-        Musics = musicDtos ?? new List<MusicDto>();
+        Musics = musicDtos;
     }
 }

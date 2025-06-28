@@ -1,4 +1,5 @@
 @using Application.DTOs
+@using Domain.Enums
 
 @model AlbumDto
 @{
@@ -14,19 +15,37 @@
 
     <div class="mb-3 bg-body">
         <label class="form-label">Título do Álbum</label>
-        <input type="text" asp-for="Title" class="form-control bg-body text-white" placeholder="Título do Álbum" />
+        <input type="text" asp-for="Title"
+            class="form-control bg-body text-white" placeholder="Título do Álbum" />
         @Html.ValidationMessageFor(x => x.Title)
     </div>
 
     <div class="mb-3 bg-body">
         <label class="form-label">Data de Lançamento</label>
-        <input type="date" asp-for="ReleaseDate" class="form-control bg-body text-white" />
+        <input type="date" asp-for="ReleaseDate"
+            class="form-control bg-body text-white" />
         @Html.ValidationMessageFor(x => x.ReleaseDate)
     </div>
 
     <div class="mb-3 bg-body">
+        <label class="form-label">Tipo do Álbum</label>
+        <select asp-for="Type" class="form-select bg-body text-white">
+            <option value="">Selecione o tipo</option>
+            @foreach (var type in Enum.GetValues(typeof(AlbumType)).Cast<AlbumType>())
+            {
+                <option value="@type"
+                    selected="@(Model.Type == type ? "selected" : null)">
+                    @type.ToString()
+                </option>
+            }
+        </select>
+        @Html.ValidationMessageFor(x => x.Type)
+    </div>
+
+    <div class="mb-3 bg-body">
         <label class="form-label">Artista</label>
-        <input type="text" asp-for="ArtistName" class="form-control bg-body text-white" placeholder="Artista" />
+        <input type="text" asp-for="ArtistName"
+            class="form-control bg-body text-white" placeholder="Artista" />
         @Html.ValidationMessageFor(x => x.ArtistName)
     </div>
 

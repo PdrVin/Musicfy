@@ -60,8 +60,15 @@ public class PlaylistController : Controller
         return RedirectToAction("Index");
     }
 
-    public IActionResult Edit(Guid id) =>
-        View(_playlistService.GetByIdAsync(id).Result);
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        var playlist = await _playlistService.GetPlaylistByIdAsync(id);
+        if (playlist == null) return NotFound();
+
+        var playlistDto = _mapper.Map<PlaylistDto>(playlist);
+
+        return View(playlistDto);
+    }
 
     [HttpPost]
     public IActionResult Edit(PlaylistDto playlist)

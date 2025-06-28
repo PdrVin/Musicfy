@@ -61,7 +61,12 @@ public class AlbumService : Service<AlbumDto, Album>, IAlbumService
         var artist = await _artistRepository.GetByNameAsync(editAlbum.ArtistName!)
             ?? throw new Exception("NotFound");
 
-        album.Update(editAlbum.Title, editAlbum.ReleaseDate, artist.Id);
+        album.Update(
+            editAlbum.Title,
+            editAlbum.ReleaseDate,
+            editAlbum.Type,
+            artist.Id
+        );
 
         _albumRepository.Update(album);
         await _unitOfWork.CommitAsync();

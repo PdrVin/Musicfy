@@ -54,8 +54,8 @@ public class MusicService : Service<MusicDto, Music>, IMusicService
             return new Music(
                 dto.Title,
                 new TimeSpan(0, dto.Duration.Hours, dto.Duration.Minutes),
-                artist.Id,
-                album.Id
+                album.Id,
+                artist.Id
             );
         });
 

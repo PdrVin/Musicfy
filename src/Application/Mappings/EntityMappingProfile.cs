@@ -31,7 +31,6 @@ public class EntityMappingProfile : Profile
             .ForMember(dest => dest.Playlists, opt => opt.Ignore());
 
         // Playlist ↔ PlaylistDto
-        // Playlist ↔ PlaylistDto
         CreateMap<Playlist, PlaylistDto>()
             .ForMember(dest => dest.Musics, opt => opt.MapFrom(src => src.Musics))
             .ReverseMap()

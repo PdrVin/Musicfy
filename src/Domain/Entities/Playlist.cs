@@ -19,7 +19,7 @@ public class Playlist : EntityBase
 
     public void Update(string name)
     {
-        Name = name;
+        if (!Name.Equals(name)) Name = name;
         UpdatedAt = DateTime.Now;
     }
 }
