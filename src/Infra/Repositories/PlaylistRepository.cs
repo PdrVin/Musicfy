@@ -22,9 +22,11 @@ public class PlaylistRepository : Repository<Playlist>, IPlaylistRepository
     public async Task<Playlist?> GetPlaylistByIdAsync(Guid id)
     {
         return await Entities
-            .Include(p => p.Musics)
+            .Include(p => p.Musics!)
                 .ThenInclude(m => m.Album)
+            .Include(p => p.Musics!)
                 .ThenInclude(m => m.Artist)
+            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 

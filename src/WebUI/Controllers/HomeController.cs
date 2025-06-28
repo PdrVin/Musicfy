@@ -33,7 +33,7 @@ public class HomeController : Controller
         IEnumerable<Music> musics = await _musicService.GetAllMusicsAsync();
         IEnumerable<Playlist> playlists = await _playlistService.GetAllPlaylistsAsync();
 
-        IEnumerable<Artist> topArtistsByMusic = await _artistService.GetTopArtistsByMusicAsync(10);
+        IEnumerable<Artist> topArtistsByMusic = await _artistService.GetTopArtistsByMusicAsync(12);
         IEnumerable<Artist> topArtistsByAlbum = await _artistService.GetTopArtistsByAlbumAsync(10);
 
         DashboardViewModel model = new()

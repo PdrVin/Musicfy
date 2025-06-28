@@ -34,6 +34,7 @@ public class AlbumRepository : Repository<Album>, IAlbumRepository
     public async Task<Album?> GetByTitleAsync(string title)
     {
         return await Entities
+            .AsNoTracking()
             .FirstOrDefaultAsync(a => a.Title == title);
     }
 

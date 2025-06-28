@@ -77,7 +77,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var music in Model.Musics!)
+                    @foreach (var music in Model.Musics!.OrderBy(m => m.Title))
                     {
                         <tr class="align-middle" style="border-bottom: 1px solid #E0E0E0;">
                             <td><div class="fw-bold">@music.Title</div></td>

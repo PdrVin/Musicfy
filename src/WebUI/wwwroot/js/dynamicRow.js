@@ -11,17 +11,38 @@ function addDynamicRow(containerId, fieldConfigs) {
     div.appendChild(span);
 
     for (const config of fieldConfigs) {
-        const input = document.createElement('input');
-        input.type = config.type || "text";
-        input.id = `${index}__${config.name}`;
-        input.name = `[${index}].${config.name}`;
-        input.placeholder = config.placeholder;
-        input.className = config.className || "form-control bg-body text-white";
+        if (config.tag == "select") {
+            const select = document.createElement('select');
+            select.className = config.className || "form-select bg-body text-white";
+            select.name = `[${index}].${config.name}`;
+            select.id = `${index}__${config.name}`;
 
-        input.setAttribute("data-val", "true");
-        input.setAttribute("data-val-required", `O campo ${config.name} é obrigatório.`);
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.innerText = config.placeholder || "Selecione";
+            select.appendChild(defaultOption);
 
-        div.appendChild(input);
+            for (const opt of config.options || []) {
+                const option = document.createElement("option");
+                option.value = opt.value;
+                option.innerText = opt.text;
+                select.appendChild(option);
+            }
+
+            div.appendChild(select);
+        } else {
+            const input = document.createElement('input');
+            input.type = config.type || "text";
+            input.id = `${index}__${config.name}`;
+            input.name = `[${index}].${config.name}`;
+            input.placeholder = config.placeholder;
+            input.className = config.className || "form-control bg-body text-white";
+
+            input.setAttribute("data-val", "true");
+            input.setAttribute("data-val-required", `O campo ${config.name} é obrigatório.`);
+
+            div.appendChild(input);
+        }
 
         const validationSpan = document.createElement("span");
         validationSpan.className = "text-danger field-validation-valid";

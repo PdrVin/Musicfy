@@ -55,7 +55,7 @@
         @if (Model.Albums!.Any())
         {
             <div class="row">
-                @foreach (var album in Model.Albums!)
+                @foreach (var album in Model.Albums!.OrderByDescending(a => a.ReleaseDate))
                 {
                     <div class="col-md-3 mb-4">
                         <a asp-controller="Album" asp-action="Details" asp-route-id="@album.Id"
@@ -64,7 +64,13 @@
                                 style="border-radius: 1.2rem; background-color: #343a40">
                                 <div style="padding: 1.2rem;">
                                     <h5 class="fw-semibold">@album.Title</h5>
-                                    <p class="mb-0">@album.ReleaseDate.Year</p>
+                                    <div class="d-flex">
+                                        <p class="mb-0">@album.ReleaseDate.Year</p>
+                                        <i class="bi bi-dot"></i>
+                                        <p class="mb-0">@album.Type</p>
+                                        <i class="bi bi-dot"></i>
+                                        <p class="mb-0">@album.Musics!.Count()</p>
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -103,7 +109,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var music in Model.Musics!)
+                    @foreach (var music in Model.Musics!
+                        .OrderBy(m => m.AlbumTitle)
+                        .ThenBy(m => m.Title))
                     {
                         <tr>
                             <td><div class="fw-bold">@music.Title</div></td>

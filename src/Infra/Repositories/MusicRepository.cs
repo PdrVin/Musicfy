@@ -36,6 +36,7 @@ public class MusicRepository : Repository<Music>, IMusicRepository
     {
         return await Entities
             .Where(m => ids.Contains(m.Id))
+            .AsNoTracking()
             .ToListAsync();
     }
 

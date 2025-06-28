@@ -24,8 +24,9 @@ public class ArtistRepository : Repository<Artist>, IArtistRepository
     public async Task<Artist?> GetArtistByIdAsync(Guid id)
     {
         return await Entities
-            .Include(a => a.Albums)
-            .Include(a => a.Musics)
+            .Include(a => a.Albums!)
+                .ThenInclude(al => al.Musics)
+            .Include(a => a.Musics!)
                 .ThenInclude(m => m.Album)
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.Id == id);
